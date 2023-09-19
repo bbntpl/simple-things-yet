@@ -1,12 +1,16 @@
 {
-	"name": "blog-v1-frontend-viewers",
+	"name": "simple-things-yet",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build",
 		"lint": "vue-cli-service lint",
-		"test:e2e": "cypress open"
+		"test:e2e": "cypress open",
+		"lint:fix": "vue-cli-service lint -- --fix src/**/*.js,src/**/*.vue",
+		"prettier": "npx prettier src test --check",
+		"prettier:fix": "npm run prettier -- --write src/**/*.js,src/**/*.vue",
+		"format": "npm run prettier:fix && npm run lint:fix"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^6.4.0",

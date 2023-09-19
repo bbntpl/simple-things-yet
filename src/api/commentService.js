@@ -1,10 +1,10 @@
-import api, { requestOptions } from './api';
+import api, { requestOptions } from '.';
 
 const baseUrl = '/comments';
 
 export const fetchComments = async () => {
 	try {
-		const response = await api.get(`${baseUrl}/`);
+		const response = await api.get(`${baseUrl}/non-existent`);
 		return response.data;
 	} catch (error) {
 		throw new Error(error);
@@ -22,18 +22,22 @@ export const fetchComment = async (parentCommentId) => {
 	}
 };
 
-export const fetchReplies = (parentCommentId) => {
+export const fetchReplies = async (parentCommentId) => {
 	try {
-		const response = api.get(`${baseUrl}/${parentCommentId}`);
+		const response = await api.get(`${baseUrl}/${parentCommentId}`);
 		return response.data;
 	} catch (error) {
 		throw new Error(error);
 	}
 };
 
-export const createComment = (newComment, token) => {
+export const createComment = async (newComment, token) => {
 	try {
-		const response = api.post(`${baseUrl}/`, newComment, requestOptions(token));
+		const response = await api.post(
+			`${baseUrl}/`,
+			newComment,
+			requestOptions(token),
+		);
 		return response.data;
 	} catch (error) {
 		if (error.response) {
@@ -42,12 +46,12 @@ export const createComment = (newComment, token) => {
 	}
 };
 
-export const updateComment = (parentCommentId, updatedComment, token) => {
+export const updateComment = async (parentCommentId, updatedComment, token) => {
 	try {
-		const response = api.put(
+		const response = await api.put(
 			`${baseUrl}/${parentCommentId}/`,
 			updatedComment,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
@@ -57,11 +61,11 @@ export const updateComment = (parentCommentId, updatedComment, token) => {
 	}
 };
 
-export const deleteComment = (parentCommentId, token) => {
+export const deleteComment = async (parentCommentId, token) => {
 	try {
-		const response = api.delete(
+		const response = await api.delete(
 			`${baseUrl}/${parentCommentId}/`,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
@@ -71,12 +75,12 @@ export const deleteComment = (parentCommentId, token) => {
 	}
 };
 
-export const createReply = (parentCommentId, newReply, token) => {
+export const createReply = async (parentCommentId, newReply, token) => {
 	try {
-		const response = api.post(
+		const response = await api.post(
 			`${baseUrl}/${parentCommentId}/replies`,
 			newReply,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
@@ -86,12 +90,17 @@ export const createReply = (parentCommentId, newReply, token) => {
 	}
 };
 
-export const updateReply = (parentCommentId, replyId, updatedReply, token) => {
+export const updateReply = async (
+	parentCommentId,
+	replyId,
+	updatedReply,
+	token,
+) => {
 	try {
-		const response = api.put(
+		const response = await api.put(
 			`${baseUrl}/${parentCommentId}/replies/${replyId}`,
 			updatedReply,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
@@ -101,11 +110,11 @@ export const updateReply = (parentCommentId, replyId, updatedReply, token) => {
 	}
 };
 
-export const deleteReply = (parentCommentId, replyId, token) => {
+export const deleteReply = async (parentCommentId, replyId, token) => {
 	try {
-		const response = api.delete(
+		const response = await api.delete(
 			`${baseUrl}/${parentCommentId}/replies/${replyId}`,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {

@@ -4,8 +4,8 @@ module.exports = {
 		node: true,
 	},
 	extends: [
-		'plugin:vue/vue3-essential',
 		'eslint:recommended',
+		'plugin:vue/vue3-essential',
 		'plugin:prettier/recommended',
 		'prettier',
 	],
@@ -13,10 +13,37 @@ module.exports = {
 		parser: '@babel/eslint-parser',
 	},
 	rules: {
-		indent: 'off',
 		'prettier/prettier': [
 			'error',
-			{ singleQuote: true, semi: true, useTabs: true, tabWdth: 2 },
+			{
+				singleQuote: true,
+				semi: true,
+				useTabs: true,
+				tabWidth: 2,
+				trailingComma: 'all',
+			},
 		],
+		indent: 'off',
+		'max-lines': [
+			'error',
+			{
+				max: 150,
+			},
+		],
+		'max-lines-per-function': [
+			'error',
+			{
+				max: 30,
+			},
+		],
+		noEmptyFunction: 'off',
+		noTabs: [
+			0,
+			{
+				allowIndentationTabs: true,
+			},
+		],
+		quotes: [2, 'single'],
+		'comma-dangle': [2, 'always-multiline'],
 	},
 };

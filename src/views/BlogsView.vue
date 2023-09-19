@@ -8,11 +8,12 @@
 			</li>
 		</ul>
 	</div>
+	<button v-bind="navigateToBlogs">Browse all blogs</button>
 </template>
 
 <script>
 import { useBlogStore } from '@/stores/blog';
-import { fetchPublishedBlogs } from '@/services/blogService';
+import { fetchPublishedBlogs } from '@/api/blogService';
 // import { BlogCard } from '@/components/blog/BlogCard.vue';
 
 export default {

@@ -20,6 +20,34 @@ import axios from 'axios';
 import { isTokenExpiredError } from '../../services/api';
 import BlogHeader from '../../components/NavHeader';
 
+function handleMount({ router, store }) {
+	const logoutWhenTokenExpires = () => {
+		store.dispatch('logoutAuthor');
+		router.push('/login');
+	};
+
+	const interceptor = axios.interceptors.response.use(
+		function (response) {
+			return response;
+		},
+		function (error) {
+			if (isTokenExpiredError(error)) {
+				logoutWhenTokenExpires();
+				throw new Error('Token expired');
+			} else if (
+				!!error?.response?.data?.errors ||
+				!!error?.response?.data?.error
+			) {
+				return error.response;
+			} else {
+				throw new Error(error?.response?.data?.message || error.message);
+			}
+		},
+	);
+
+	return () => axios.interceptors.response.eject(interceptor);
+}
+
 export default {
 	components: {
 		BlogHeader,
@@ -30,47 +58,16 @@ export default {
 		const store = useStore();
 		const loggedAuthor = ref(store.getters.selectLoggedAuthor);
 
-		const isCurrentlyIndexPage = () => {
-			return route.path === '/' || route.path === '/dashboard';
-		};
-
-		const navigate = (route) => {
-			router.go(route);
-		};
+		const isIndexPage = () => route.path === '/' || route.path === '/dashboard';
+		const navigate = (route) => router.go(route);
 
 		onMounted(() => {
-			const logoutWhenTokenExpires = () => {
-				store.dispatch('logoutAuthor');
-				router.push('/login');
-			};
-
-			const interceptor = axios.interceptors.response.use(
-				function (response) {
-					return response;
-				},
-				function (error) {
-					if (isTokenExpiredError(error)) {
-						logoutWhenTokenExpires();
-						throw new Error('Token expired');
-					} else if (
-						!!error?.response?.data?.errors ||
-						!!error?.response?.data?.error
-					) {
-						return error.response;
-					} else {
-						throw new Error(error?.response?.data?.message || error.message);
-					}
-				}
-			);
-
-			return () => {
-				axios.interceptors.response.eject(interceptor);
-			};
+			handleMount({ store, router });
 		});
 
 		return {
 			loggedAuthor,
-			isCurrentlyIndexPage,
+			isIndexPage,
 			navigate,
 		};
 	},

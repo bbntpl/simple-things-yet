@@ -1,5 +1,16 @@
 <template>
-	<el-footer class="blog-theme-primary">
+	<el-footer class="light-bg">
+		<div class="divider" />
+		<div class="footer-content">
+			<div class="footer-content__upper">
+				<img
+					class="logo"
+					src="../../../assets/images/sty_logo.svg"
+					alt="logo"
+				/>
+				<div class="footer-links"></div>
+			</div>
+		</div>
 		<div class="social-icons">
 			<a href="https://www.instagram.com/SimpleThingsYet" target="_blank">
 				<font-awesome-icon icon="fab fa-instagram" />
@@ -17,12 +28,14 @@ import { ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons';
-import '../assets/styles/custom-theme.css';
+
+import './FooterLayout.css';
+import '../../../assets/styles/styles.css';
 
 library.add(faInstagram, faTwitter);
 
 export default {
-	name: 'BlogFooter',
+	name: 'FooterLayout',
 	components: {
 		FontAwesomeIcon,
 	},
@@ -32,20 +45,3 @@ export default {
 	},
 };
 </script>
-
-<style scoped>
-.el-footer {
-	display: flex;
-	justify-content: space-between;
-	padding: 20px;
-}
-
-.social-icons a {
-	margin-right: 10px;
-	color: #f7f7ee;
-}
-
-.copyright {
-	color: #f7f7ee;
-}
-</style>

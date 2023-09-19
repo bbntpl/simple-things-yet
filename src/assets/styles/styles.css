@@ -1,0 +1,54 @@
+/*** BACKGROUND COLORS **/
+.primary-bg {
+	background-color: var(--shark-color);
+}
+
+.light-bg {
+	background-color: var(--white-color);
+}
+
+.secondary-bg {
+	background-color: var(--shuttle-gray-color);
+}
+
+.tertiary-bg {
+	background-color: var(--iron-color);
+}
+
+.highlight-bg {
+	background-color: var(--varden-color);
+}
+
+/*** TEXT COLORS **/
+.primary-text {
+	color: var(--shark-color);
+}
+
+.light-text {
+	color: var(--white-color);
+}
+
+.secondary-text {
+	color: var(--shuttle-gray-color);
+}
+
+.tertiary-text {
+	color: var(--iron-color);
+}
+
+.highlight-text {
+	color: var(--varden-color);
+}
+
+/*** REUSABLE STYLES ***/
+.divider {
+	height: 1px;
+	width: 100%;
+	max-width: 720px;
+}
+
+.logo {
+	width: 20vw;
+	min-width: 220px;
+	height: auto;
+}

@@ -39,7 +39,7 @@ export const deleteUserAccountRequest = async (user, token) => {
 		const response = await api.delete(
 			`${baseUrl}/${user.id}/delete`,
 			{ password: user.password },
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
@@ -54,7 +54,7 @@ export const updateUserInfoRequest = async (user, token) => {
 		const response = await api.put(
 			`${baseUrl}/${user.id}/change-password`,
 			user,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
@@ -71,7 +71,7 @@ export const changeUserPwdRequest = async (user, token) => {
 		const response = await api.put(
 			`${baseUrl}/${user.id}/update`,
 			user,
-			requestOptions(token)
+			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {

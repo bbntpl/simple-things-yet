@@ -1,22 +1,22 @@
 <template>
-	<el-container class="container" direction="vertical">
-		<BlogHeader />
+	<el-container id="app-container" direction="vertical">
+		<Header />
 		<el-main class="main-content">
 			<router-view />
 		</el-main>
-		<BlogFooter />
+		<Footer />
 	</el-container>
 </template>
 
 <script>
-import BlogHeader from '@/components/BlogHeader.vue';
-import BlogFooter from '@/components/BlogFooter.vue';
+import Header from '@/components/layouts/Header.vue';
+import Footer from '@/components/layouts/Footer';
 
 export default {
 	name: 'App',
 	components: {
-		BlogHeader,
-		BlogFooter,
+		Header,
+		Footer,
 	},
 };
 </script>
@@ -30,18 +30,18 @@ export default {
 	color: #2c3e50;
 }
 
-.el-menu--horizontal {
-	justify-content: center !important;
-}
-
-.container {
+#app-container {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 }
 
+.el-menu--horizontal {
+	justify-content: center !important;
+}
+
 .main-content {
-	flex: 1 0 auto;
+	flex: 1;
 }
 
 nav {
