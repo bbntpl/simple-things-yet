@@ -46,4 +46,17 @@ module.exports = {
 		quotes: [2, 'single'],
 		'comma-dangle': [2, 'always-multiline'],
 	},
+	overrides: [
+		{
+			files: ['**/src/api/**'],
+			rules: {
+				'max-lines': [
+					'error',
+					{
+						max: 500,
+					},
+				],
+			},
+		},
+	],
 };

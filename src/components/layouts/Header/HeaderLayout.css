@@ -1,0 +1,29 @@
+.header-layout {
+	display: flex;
+	width: 100%;
+	padding: 16px 0px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 15px;
+	background-color: var(--white-color);
+}
+
+.nav-menu {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	align-self: stretch;
+}
+
+.el-menu-item {
+	padding: 4px 10px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.nav-menu a {
+	text-decoration: none;
+}

@@ -1,47 +1,58 @@
 <template>
-	<el-footer class="light-bg">
+	<div class="tertiary-bg footer-layout">
 		<div class="divider" />
 		<div class="footer-content">
 			<div class="footer-content__upper">
 				<img
-					class="logo"
-					src="../../../assets/images/sty_logo.svg"
+					class="logo__shape"
+					src="../../../assets/images/sty_shape.png"
 					alt="logo"
 				/>
+				<div v-for="content of linksList" :key="content.label">
+					<footer-links-list :label="content.label" :items="content.items" />
+				</div>
 				<div class="footer-links"></div>
 			</div>
+			<div class="copyright">
+				&copy; {{ copyrightYears.initial }} -
+				{{ copyrightYears.current }} SimpleThingsYet
+			</div>
 		</div>
-		<div class="social-icons">
-			<a href="https://www.instagram.com/SimpleThingsYet" target="_blank">
-				<font-awesome-icon icon="fab fa-instagram" />
-			</a>
-			<a href="https://twitter.com/SimpleThingsYet" target="_blank">
-				<font-awesome-icon icon="fab fa-twitter" />
-			</a>
-		</div>
-		<div class="copyright">&copy; {{ year }} SimpleThingsYet</div>
-	</el-footer>
+	</div>
 </template>
 
 <script>
 import { ref } from 'vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons';
+
+import FooterLinksList from './FooterLinksList.vue';
 
 import './FooterLayout.css';
 import '../../../assets/styles/styles.css';
 
-library.add(faInstagram, faTwitter);
+const baseUrl = process.env.VUE_APP_BASE_URL;
+const linksList = [
+	{
+		label: 'Resources',
+		items: [
+			{ name: 'Blog Categories', url: `${baseUrl}/blog-categories` },
+			{ name: 'Blogs', url: `${baseUrl}/blogs` },
+			{ name: 'FAQ', url: `${baseUrl}/faq` },
+			{ name: 'About', url: `${baseUrl}/about` },
+		],
+	},
+];
 
 export default {
 	name: 'FooterLayout',
 	components: {
-		FontAwesomeIcon,
+		FooterLinksList,
 	},
 	setup() {
-		const year = ref(new Date().getFullYear());
-		return { year };
+		const copyrightYears = {
+			initial: 2023,
+			current: ref(new Date().getFullYear()),
+		};
+		return { copyrightYears, linksList };
 	},
 };
 </script>

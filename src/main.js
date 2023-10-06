@@ -1,6 +1,10 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+
 import ElementPlus from 'element-plus';
+import { HomeFilled, House } from '@element-plus/icons-vue';
+
+const iconsToRegister = { HomeFilled, House };
 
 import 'element-plus/dist/index.css';
 import './assets/styles/variables.css';
@@ -13,8 +17,12 @@ const pinia = createPinia();
 
 const app = createApp(App);
 
-app.use(router);
+for (const [key, component] of Object.entries(iconsToRegister)) {
+	app.component(key, component);
+}
+
 app.use(pinia);
+app.use(router);
 app.use(ElementPlus);
 
 // error configurations

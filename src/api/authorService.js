@@ -1,4 +1,6 @@
-import api from './api';
+import api from '.';
+
+const baseUrl = '/author/';
 
 /**
  * It fetches the author object
@@ -7,7 +9,7 @@ import api from './api';
  */
 export const fetchAuthor = async () => {
 	try {
-		const response = await api.get('/author/');
+		const response = await api.get(baseUrl);
 		return response.data;
 	} catch (error) {
 		throw new Error(error);

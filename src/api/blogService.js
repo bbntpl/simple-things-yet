@@ -7,7 +7,8 @@ const baseUrl = '/blogs';
  * @returns {Promise<Object[]>} Array promises of published blog objects.
  * @throws {Error} Throws an error if the fetch operation fails.
  */
-export const fetchPublishedBlogs = async () => {
+export const fetchPublishedBlogs = async (queries) => {
+	const { skip, limit, sort } = queries;
 	try {
 		const response = await api.get(`${baseUrl}/published`);
 		return response.data;
@@ -22,8 +23,7 @@ export const fetchPublishedBlogs = async () => {
  * @param {Object} user - The user object
  * @param {string} user.id - The user's ID.
  * @param {string} token - The authentication token.
- * @returns {Promise<Object|void>} The updated blog object or void if an error occurs.
- * @throws {Error} Throws an error if the update operation fails and no error response is received.
+ * @returns {Promise<Object|Error>} The updated blog object or error if an error occurs.
  */
 export const updateBlogWithUserInteraction = async (
 	updatedBlog,
@@ -39,6 +39,7 @@ export const updateBlogWithUserInteraction = async (
 		return response.data;
 	} catch (error) {
 		if (error.response) {
+			// Return error data for UI display, leveraging axios interceptors.
 			return error.response.data;
 		}
 	}

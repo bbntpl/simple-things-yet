@@ -19,6 +19,10 @@
 	background-color: var(--varden-color);
 }
 
+.accent-bg {
+	background-color: var(--golden-fizz-color);
+}
+
 /*** TEXT COLORS **/
 .primary-text {
 	color: var(--shark-color);
@@ -40,15 +44,35 @@
 	color: var(--varden-color);
 }
 
+.accent-text {
+	color: var(--golden-fizz-color);
+}
+
 /*** REUSABLE STYLES ***/
 .divider {
 	height: 1px;
-	width: 100%;
-	max-width: 720px;
+	width: 90%;
+	max-width: 1280px;
+	background-color: var(--shuttle-gray-color);
 }
 
-.logo {
+.logo-wrapper {
+	display: flex;
+	padding: 12px 0px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	align-self: stretch;
+}
+
+logo {
 	width: 20vw;
 	min-width: 220px;
+	height: auto;
+}
+
+.logo__shape {
+	width: 5vw;
+	min-width: 70px;
 	height: auto;
 }

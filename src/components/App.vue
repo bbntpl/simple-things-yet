@@ -1,33 +1,50 @@
 <template>
 	<el-container id="app-container" direction="vertical">
 		<Header />
-		<el-main class="main-content">
+		<main class="main-content">
 			<router-view />
-		</el-main>
+		</main>
 		<Footer />
 	</el-container>
 </template>
 
 <script>
-import Header from '@/components/layouts/Header.vue';
+import { ElContainer } from 'element-plus';
+import { onMounted } from 'vue';
+
+import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
+
+import { useAuthorStore } from '@/stores/author';
 
 export default {
 	name: 'App',
 	components: {
 		Header,
 		Footer,
+		ElContainer,
+	},
+	setup() {
+		const { initializeAuthor } = useAuthorStore();
+
+		onMounted(async () => {
+			const fetchedAuthor = await initializeAuthor();
+			console.log(fetchedAuthor);
+		});
 	},
 };
 </script>
 
 <style>
+* {
+	box-sizing: border-box;
+}
+
 #app {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
+	font-family: 'Noto Sans', Avenir, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
-	color: #2c3e50;
 }
 
 #app-container {

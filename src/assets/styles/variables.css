@@ -1,8 +1,18 @@
 :root {
 	--shark-color: #272829;
-	--white-color: #ffffff;
+	--white-color: #fff;
+	--golden-fizz-color: #eafa47;
+	--black-color: #000;
 	--shuttle-gray-color: #61677a;
 	--iron-color: #d8d9da;
 	--varden-color: #fff6e0;
-	/* --accent-color */
+
+	/* overridden themes */
+	--el-menu-hover-text-color: #8d8802;
+	--el-menu-hover-bg-color: #fffeda;
+	--el-menu-active-color: #8d8802;
+	--el-menu-border-color: #fff;
+
+	--el-link-hover-text-color: #272829;
+	--el-link-text-color: #272829;
 }
