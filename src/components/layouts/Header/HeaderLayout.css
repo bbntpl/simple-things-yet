@@ -18,12 +18,12 @@
 }
 
 .el-menu-item {
-	padding: 4px 10px;
 	justify-content: center;
 	align-items: center;
-	gap: 10px;
+	padding: 0;
 }
 
 .nav-menu a {
 	text-decoration: none;
+	padding: 4px 10px;
 }

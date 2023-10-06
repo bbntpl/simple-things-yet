@@ -7,6 +7,8 @@
 	--iron-color: #d8d9da;
 	--varden-color: #fff6e0;
 
+	--max-width: 1280px;
+
 	/* overridden themes */
 	--el-menu-hover-text-color: #8d8802;
 	--el-menu-hover-bg-color: #fffeda;
@@ -15,4 +17,6 @@
 
 	--el-link-hover-text-color: #272829;
 	--el-link-text-color: #272829;
+
+	--el-collapse-header-font-size: 20px;
 }

@@ -25,11 +25,12 @@ export default {
 		ElContainer,
 	},
 	setup() {
-		const { initializeAuthor } = useAuthorStore();
+		const authorStore = useAuthorStore();
 
 		onMounted(async () => {
-			const fetchedAuthor = await initializeAuthor();
-			console.log(fetchedAuthor);
+			if (!authorStore.data && !authorStore.isFetching) {
+				await authorStore.initializeAuthor();
+			}
 		});
 	},
 };
@@ -51,6 +52,8 @@ export default {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	justify-content: center;
+	align-items: center;
 }
 
 .el-menu--horizontal {
@@ -59,6 +62,8 @@ export default {
 
 .main-content {
 	flex: 1;
+	width: 100%;
+	max-width: var(--max-width);
 }
 
 nav {

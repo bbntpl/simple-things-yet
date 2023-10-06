@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
 import ElementPlus from 'element-plus';
+import VueDOMPurifyHTML from 'vue-dompurify-html';
 import { HomeFilled, House } from '@element-plus/icons-vue';
 
 const iconsToRegister = { HomeFilled, House };
@@ -21,6 +22,7 @@ for (const [key, component] of Object.entries(iconsToRegister)) {
 	app.component(key, component);
 }
 
+app.use(VueDOMPurifyHTML);
 app.use(pinia);
 app.use(router);
 app.use(ElementPlus);

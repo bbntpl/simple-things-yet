@@ -20,6 +20,7 @@ export default {
 	align-items: center;
 	gap: 10px;
 	align-self: stretch;
+	width: 100%;
 }
 
 .container {

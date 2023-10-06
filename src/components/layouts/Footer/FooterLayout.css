@@ -1,6 +1,6 @@
 .footer-layout {
 	display: flex;
-	flex-shrink: 0;
+	width: 100%;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -17,7 +17,7 @@
 	display: flex;
 	width: 100%;
 	padding: 0 1rem;
-	max-width: 1280px;
+	max-width: var(--max-width);
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
@@ -26,7 +26,7 @@
 
 .footer-content__upper {
 	display: flex;
-	padding: 24px 64px;
+	padding: 24px 0;
 	justify-content: space-between;
 	align-items: flex-start;
 	align-self: stretch;

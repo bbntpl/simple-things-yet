@@ -24,7 +24,7 @@ const routes = [
 	{
 		path: '/faq',
 		name: 'faq-view',
-		component: () => import('../views/FAQView.vue'),
+		component: () => import('../views/FAQView'),
 	},
 ];
 
