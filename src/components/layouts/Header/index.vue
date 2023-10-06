@@ -3,14 +3,14 @@
 		<div class="logo-wrapper">
 			<img class="logo" src="../../../assets/images/sty_logo.svg" alt="logo" />
 		</div>
-		<el-menu mode="horizontal" class="nav-menu">
-			<el-menu-item index="1">
+		<el-menu mode="horizontal" class="nav-menu" :default-active="$route.path">
+			<el-menu-item index="/blog-categories">
 				<router-link to="/blog-categories">Categories</router-link>
 			</el-menu-item>
-			<el-menu-item index="2">
+			<el-menu-item index="/blogs">
 				<router-link to="/blogs">Blogs</router-link>
 			</el-menu-item>
-			<el-menu-item index="3">
+			<el-menu-item index="/">
 				<router-link to="/">
 					<el-icon>
 						<HomeFilled
@@ -20,10 +20,10 @@
 					</el-icon>
 				</router-link>
 			</el-menu-item>
-			<el-menu-item index="4">
+			<el-menu-item index="/faq">
 				<router-link to="/faq">FAQ</router-link>
 			</el-menu-item>
-			<el-menu-item index="5">
+			<el-menu-item index="/about">
 				<router-link to="/about">About author</router-link>
 			</el-menu-item>
 		</el-menu>

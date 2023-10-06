@@ -9,7 +9,7 @@ const routes = [
 	{
 		path: '/about',
 		name: 'about-view',
-		component: () => import('../views/AboutView.vue'),
+		component: () => import('../views/AboutView'),
 	},
 	{
 		path: '/blog-categories',

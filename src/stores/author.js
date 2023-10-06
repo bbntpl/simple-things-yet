@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 export const useAuthorStore = defineStore('author', {
 	state: () => ({
-		data: null,
+		author: null,
 		isFetching: false,
 		error: null,
 	}),
@@ -16,7 +16,7 @@ export const useAuthorStore = defineStore('author', {
 			this.startFetching();
 			try {
 				const fetchedAuthor = await fetchAuthor();
-				this.data = fetchedAuthor;
+				this.author = fetchedAuthor;
 				return fetchedAuthor;
 			} catch (error) {
 				this.error = error;
@@ -27,8 +27,8 @@ export const useAuthorStore = defineStore('author', {
 		},
 	},
 	getters: {
-		getAuthor() {
-			return this.data;
+		isDataReady() {
+			return this.author && !this.isFetching && !this.error;
 		},
 	},
 });

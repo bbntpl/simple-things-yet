@@ -7,8 +7,8 @@ const baseUrl = '/blogs';
  * @returns {Promise<Object[]>} Array promises of published blog objects.
  * @throws {Error} Throws an error if the fetch operation fails.
  */
-export const fetchPublishedBlogs = async (queries) => {
-	const { skip, limit, sort } = queries;
+export const fetchPublishedBlogs = async () => {
+	// const { skip, limit, sort } = queries;
 	try {
 		const response = await api.get(`${baseUrl}/published`);
 		return response.data;

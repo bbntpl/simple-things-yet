@@ -17,8 +17,8 @@ export default {
 		MainWrapper,
 	},
 	setup() {
-		const { getAuthor } = useAuthorStore();
-		const authorName = getAuthor?.name;
+		const { author } = useAuthorStore();
+		const authorName = author?.name;
 
 		return { authorName };
 	},

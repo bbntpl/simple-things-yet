@@ -15,7 +15,6 @@ export default {
 <style scoped>
 .main {
 	display: flex;
-	padding-top: 32px;
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
