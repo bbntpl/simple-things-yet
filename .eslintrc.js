@@ -27,7 +27,7 @@ module.exports = {
 		'max-lines': [
 			'error',
 			{
-				max: 150,
+				max: 160,
 			},
 		],
 		'max-lines-per-function': [
