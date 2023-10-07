@@ -1,10 +1,10 @@
 <template>
-	<main-wrapper>
+	<MainWrapper>
 		<div class="blog-intro">
 			<h1 class="home-title">A Personal Blog</h1>
 			<p class="home-author secondary-text">By {{ authorName }}</p>
 		</div>
-	</main-wrapper>
+	</MainWrapper>
 </template>
 
 <script>
@@ -17,8 +17,8 @@ export default {
 		MainWrapper,
 	},
 	setup() {
-		const { author } = useAuthorStore();
-		const authorName = author?.name;
+		const authorStore = useAuthorStore();
+		const authorName = authorStore.author?.name;
 
 		return { authorName };
 	},

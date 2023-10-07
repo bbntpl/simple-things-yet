@@ -1,5 +1,5 @@
 <template>
-	<main-wrapper>
+	<MainWrapper>
 		<div class="faq-header">
 			<div class="faq-intro">
 				<h1>You have questions?</h1>
@@ -17,9 +17,9 @@
 			:key="section.title"
 		>
 			<h2 class="faq-section-title">{{ section.title }}</h2>
-			<FAQ-item-group :faqSection="section" />
+			<FAQItemGroup :faqSection="section" />
 		</div>
-	</main-wrapper>
+	</MainWrapper>
 </template>
 
 <script>

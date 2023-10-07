@@ -2,7 +2,7 @@
 	<el-container id="app-container" direction="vertical">
 		<Header />
 		<main class="main-content">
-			<router-view />
+			<RouterView />
 		</main>
 		<Footer />
 	</el-container>
@@ -16,6 +16,7 @@ import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
 
 import { useAuthorStore } from '@/stores/author';
+import { storeToRefs } from 'pinia';
 
 export default {
 	name: 'App',
@@ -26,9 +27,10 @@ export default {
 	},
 	setup() {
 		const authorStore = useAuthorStore();
+		const { author, isFetching } = storeToRefs(authorStore);
 
 		onMounted(async () => {
-			if (!authorStore.data && !authorStore.isFetching) {
+			if (author.value === null && !isFetching.value) {
 				await authorStore.initializeAuthor();
 			}
 		});

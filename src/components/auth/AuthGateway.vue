@@ -1,11 +1,11 @@
 <template>
 	<div v-if="loggedAuthor === null">
-		<router-view></router-view>
+		<RouterView />
 	</div>
 	<div v-else>
-		<blog-header></blog-header>
+		<BlogHeader />
 		<layout class="responsive-layout">
-			<router-view></router-view>
+			<RouterView />
 		</layout>
 	</div>
 </template>

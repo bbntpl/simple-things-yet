@@ -14,12 +14,12 @@ const routes = [
 	{
 		path: '/blog-categories',
 		name: 'blog-categories-view',
-		component: () => import('../views/BlogCategoriesView.vue'),
+		component: () => import('../views/BlogCategoriesView'),
 	},
 	{
 		path: '/blogs',
 		name: 'blogs-view',
-		component: () => import('../views/BlogsView.vue'),
+		component: () => import('../views/BlogsView'),
 	},
 	{
 		path: '/faq',

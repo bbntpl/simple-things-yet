@@ -1,11 +1,13 @@
 <template>
-	<div class="about">
-		<AuthorAboutInfo
-			:authorPictureSrc="authorPictureSrc"
-			:authorAbout="authorAbout"
-		/>
-		<AuthorContactForm :authorEmail="authorEmail" />
-	</div>
+	<MainWrapper>
+		<div class="about">
+			<AuthorAboutInfo
+				:authorPictureSrc="authorPictureSrc"
+				:authorAbout="authorAbout"
+			/>
+			<AuthorContactForm />
+		</div>
+	</MainWrapper>
 </template>
 
 <script>
@@ -15,15 +17,19 @@ import { useAuthorStore } from '@/stores/author';
 import { fetchAuthorImageUrl } from '@/api/authorService';
 import AuthorAboutInfo from '@/components/author/AuthorAboutInfo.vue';
 import AuthorContactForm from '@/components/author/AuthorContactForm.vue';
+import MainWrapper from '@/components/layouts/MainWrapper.vue';
+import { storeToRefs } from 'pinia';
 
 export default {
 	name: 'AboutView',
 	components: {
 		AuthorAboutInfo,
 		AuthorContactForm,
+		MainWrapper,
 	},
 	setup() {
-		const { author, isDataReady } = useAuthorStore();
+		const authorStore = useAuthorStore();
+		const { author } = storeToRefs(authorStore);
 
 		const authorData = reactive({
 			bioHtml: null,
@@ -32,10 +38,10 @@ export default {
 		});
 
 		watchEffect(() => {
-			if (isDataReady) {
-				authorData.bioHtml = author.bio;
-				authorData.email = author.email;
-				authorData.imageSrc = fetchAuthorImageUrl(author.imageId);
+			if (authorStore.isDataReady) {
+				authorData.bioHtml = author.value.bio;
+				authorData.email = author.value.email;
+				authorData.imageSrc = fetchAuthorImageUrl(author.value.imageId);
 			}
 		});
 
@@ -43,7 +49,7 @@ export default {
 			authorPictureSrc: authorData.imageSrc,
 			authorAbout: authorData.bioHtml,
 			authorEmail: authorData.email,
-			isDataReady,
+			isDataReady: authorStore.isDataReady,
 		};
 	},
 };
