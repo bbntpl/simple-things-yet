@@ -1,40 +1,52 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 import { fetchAuthor } from '@/api/authorService';
+import { ElLoading } from 'element-plus';
 
 // eslint-disable-next-line max-lines-per-function
 export const useAuthorStore = defineStore('author', () => {
 	const author = ref(null);
-	const isFetching = ref(false);
-	const error = ref(null);
+	const status = reactive({
+		loadingInstance: null,
+		error: null,
+		isFetched: false,
+	});
 
-	function startFetching() {
-		isFetching.value = true;
-		error.value = null;
+	function closeLoading() {
+		if (!status.loadingInstance) return;
+		status.loadingInstance.close();
+		status.loadingInstance = null;
+	}
+
+	function startLoading() {
+		status.loadingInstance = ElLoading.service({
+			lock: true,
+			fullscreen: true,
+			text: 'Loading...',
+		});
 	}
 
 	async function initializeAuthor() {
-		startFetching();
+		startLoading();
 		try {
 			const fetchedAuthor = await fetchAuthor();
 			author.value = fetchedAuthor;
+			status.isFetched = true;
 		} catch (error) {
-			error.value = error;
-			console.error('Failed to fetch author:', error);
+			status.error = error;
+			console.error('Failed to fetch author:', error.message);
 		} finally {
-			isFetching.value = false;
+			closeLoading();
 		}
 	}
 
 	function isDataReady() {
-		return author.value && !isFetching.value && !error.value;
+		return status.isFetched && !status.loadingInstance && !status.error;
 	}
 
 	return {
 		author,
-		isFetching,
-		error,
 		isDataReady,
 		initializeAuthor,
 	};
