@@ -27,7 +27,6 @@
 				<router-link to="/about">About author</router-link>
 			</el-menu-item>
 		</el-menu>
-		<div class="divider" />
 	</div>
 </template>
 

@@ -7,10 +7,28 @@ const baseUrl = '/blogs';
  * @returns {Promise<Object[]>} Array promises of published blog objects.
  * @throws {Error} Throws an error if the fetch operation fails.
  */
-export const fetchPublishedBlogs = async () => {
-	// const { skip, limit, sort } = queries;
+export const fetchPublishedBlogs = async (queries) => {
+	const queryString = new URLSearchParams({
+		skip: queries.skip || 0,
+		limit: queries.limit || 5,
+		sort: queries.sort || 'latest',
+	}).toString();
+
 	try {
-		const response = await api.get(`${baseUrl}/published`);
+		const response = await api.get(`${baseUrl}/published?${queryString}`);
+		return response.data;
+	} catch (error) {
+		throw new Error(error);
+	}
+};
+/**
+ * Fetches total amount of published blogs with unset category.
+ * @returns {Promise<Object>} Object that contains the amount of blogs.
+ * @throws {Error} Throws an error if the fetch operation fails.
+ */
+export const fetchTotalPublishedBlogsWithUnsetCategory = async () => {
+	try {
+		const response = await api.get(`${baseUrl}/published/unset-category`);
 		return response.data;
 	} catch (error) {
 		throw new Error(error);
@@ -43,4 +61,13 @@ export const updateBlogWithUserInteraction = async (
 			return error.response.data;
 		}
 	}
+};
+
+/**
+ * It returns the blog image url
+ * @param {String} imageId The imageId of the blog image
+ * @returns {String} The image url
+ */
+export const getBlogImageUrl = (imageId) => {
+	return `${process.env.VUE_APP_API_URL}/api/blogs/${imageId}/image`;
 };

@@ -48,8 +48,13 @@
 	color: var(--golden-fizz-color);
 }
 
+/*** FILL COLORS FOR ICONS ***/
+.highlight-fill {
+	fill: var(--varden-color);
+}
+
 /*** REUSABLE STYLES ***/
-.header-layout>.divider {
+.main-content .divider {
 	background-color: var(--iron-color);
 }
 
@@ -59,7 +64,7 @@
 
 .divider {
 	height: 1px;
-	width: 90%;
+	width: 100%;
 	max-width: var(--max-width);
 }
 
@@ -90,31 +95,31 @@ logo {
 }
 
 @media (min-width: 640px) {
-.header-layout, .main-content, .footer-layout {
+	.header-layout, .main-content, .footer-layout {
 		padding: 0.75rem;
 	}
 }
 
 @media (min-width: 768px) {
-.header-layout, .main-content, .footer-layout {
+	.header-layout, .main-content, .footer-layout {
 		padding: 1rem;
 	}
 }
 
 @media (min-width: 1024px) {
-.header-layout, .main-content, .footer-layout {
+	.header-layout, .main-content, .footer-layout {
 		padding: 1.5rem;
 	}
 }
 
 @media (min-width: 1280px) {
-.header-layout, .main-content, .footer-layout {
+	.header-layout, .main-content, .footer-layout {
 		padding: 2rem;
 	}
 }
 
 @media (min-width: 1536px) {
-.header-layout, .main-content, .footer-layout {
+	.header-layout, .main-content, .footer-layout {
 		padding: 2.5rem;
 	}
 }

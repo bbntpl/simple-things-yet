@@ -21,6 +21,6 @@ export const fetchAuthor = async () => {
  * @param {String} imageId The imageId of the author image
  * @returns {String} The image url
  */
-export const fetchAuthorImageUrl = (imageId) => {
+export const getAuthorImageUrl = (imageId) => {
 	return `${process.env.VUE_APP_API_URL}/api/author/${imageId}/image`;
 };
