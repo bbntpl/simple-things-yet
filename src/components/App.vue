@@ -10,13 +10,10 @@
 
 <script>
 import { ElContainer } from 'element-plus';
-import { onMounted, ref, watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 
 import Header from '@/components/layouts/Header';
 import Footer from '@/components/layouts/Footer';
-
-import { useAuthorStore } from '@/stores/author';
-import { storeToRefs } from 'pinia';
 
 export default {
 	name: 'App',
@@ -26,17 +23,9 @@ export default {
 		ElContainer,
 	},
 	setup() {
-		const authorStore = useAuthorStore();
-		const { isDataReady } = storeToRefs(authorStore);
 		const headerRef = ref(null);
 		const footerRef = ref(null);
 		const mainComputedHeight = ref(0);
-
-		onMounted(async () => {
-			if (!isDataReady) {
-				await authorStore.initializeAuthor();
-			}
-		});
 
 		watchEffect(() => {
 			const headerHeight = headerRef.value

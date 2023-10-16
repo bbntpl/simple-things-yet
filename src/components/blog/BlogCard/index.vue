@@ -1,54 +1,77 @@
 <template>
 	<div class="blog-card-wrapper">
-		<BlogCardTitleOnly
-			v-if="variantType === 'TitleOnly'"
-			:blog="blog"
-			:blogImageSrc="blogThumbnail"
-		/>
-		<BlogCardTitleDesc
-			v-else-if="variantType === 'TitleDesc'"
-			:blog="blog"
-			:blogImageSrc="blogThumbnail"
-		/>
-		<BlogCardTitleDescDate
-			v-else-if="variantType === 'TitleDescDate'"
-			:blog="blog"
-			:blogImageSrc="blogThumbnail"
-		/>
-		<BlogCardFull
-			v-else-if="variantType === 'Full' || variantType === 'Default'"
-			:blog="blog"
-			:blogImageSrc="blogThumbnail"
-		/>
+		<div :class="`blog-card--${size}`">
+			<a :href="`${urlRoot}/blog/${blog.id}`">
+				<div class="blog-thumbnail">
+					<img :src="blogImageSrc" :alt="blog.title" />
+				</div>
+			</a>
+			<div>
+				<span :class="`blog-details ${blogStyles.detailsColorClass}`">
+					<p v-if="variantType === 'Full' || variantType === 'TitleDescDate'">
+						{{ blogPublishedDate }}
+					</p>
+					<p
+						:class="`${blogStyles.detailsColorClass}`"
+						v-if="variantType === 'Full'"
+					>
+						- STY/{{ blog.category.name }}
+					</p>
+				</span>
+				<a :href="`${urlRoot}/blog/${blog.id}`" class="blog-title">
+					<h1 :class="`${blogStyles.titleColorClass}`">
+						{{ blog.title }}
+					</h1>
+				</a>
+				<div v-if="variantType === 'Full'">
+					{{ blog.comments.length }} comments
+				</div>
+				<p
+					v-if="variantType !== 'TitleOnly'"
+					:class="`blog-content ${blogStyles.descColorClass}`"
+				>
+					{{ blogPreviewDesc }}
+				</p>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
+import './styles.css';
+import { formatDateInTimeZone } from '@/utils/date.js';
+import { extractTextFromStringifiedHTML } from '@/utils/helpers.js';
 import { getBlogImageUrl } from '@/api/blogService';
-import BlogCardTitleOnly from './variants/BlogCardTitleOnly.vue';
-import BlogCardTitleDesc from './variants/BlogCardTitleDesc.vue';
-import BlogCardTitleDescDate from './variants/BlogCardTitleDescDate.vue';
-import BlogCardFull from './variants/BlogCardFull.vue';
 
 export default {
 	name: 'BlogCard',
-	components: {
-		BlogCardTitleOnly,
-		BlogCardTitleDesc,
-		BlogCardTitleDescDate,
-		BlogCardFull,
-	},
 	props: {
+		blog: {
+			type: Object,
+			required: true,
+		},
+		blogStyles: {
+			type: Object,
+			required: true,
+		},
+		size: {
+			type: String,
+			required: true,
+			default: 'medium',
+			validator: (sizeType) => {
+				const sizeTypes = ['small', 'medium', 'large'];
+				return sizeTypes.some((size) => sizeType === size);
+			},
+		},
 		variantType: {
 			type: String,
 			required: true,
-			default: 'Default',
+			default: 'Full',
 			validator: (variantType) => {
 				const validVariantTypes = [
 					'Full',
-					'Default',
 					'TitleDesc',
 					'TitleDescDate',
 					'TitleOnly',
@@ -56,34 +79,29 @@ export default {
 				return validVariantTypes.some((type) => variantType === type);
 			},
 		},
-		blog: {
-			type: Object,
-			required: true,
-		},
 	},
 	setup(props) {
-		const blogThumbnail = ref(null);
+		const blogImageSrc = ref(null);
+		const blogPreviewDesc = ref('');
 
 		onMounted(() => {
-			if (blogThumbnail.value === null) {
-				blogThumbnail.value = getBlogImageUrl(props.blog.imageId);
+			if (blogImageSrc.value === null) {
+				blogImageSrc.value = getBlogImageUrl(props.blog.imageId);
+			}
+			if (props.blog?.content && props.variantType !== 'TitleOnly') {
+				blogPreviewDesc.value = `${extractTextFromStringifiedHTML(
+					props.blog.content,
+					300,
+				)}...`;
 			}
 		});
 
-		return { blogThumbnail };
+		return {
+			blogImageSrc,
+			blogPreviewDesc,
+			blogPublishedDate: formatDateInTimeZone(props.blog.publishedAt),
+			urlRoot: computed(() => process.env.VUE_APP_BASE_URL),
+		};
 	},
 };
 </script>
-
-<style>
-.blog-thumbnail {
-	background: #fff;
-	overflow: hidden;
-	border-radius: 3px;
-}
-
-.blog-thumbnail > img {
-	width: 100%;
-	vertical-align: middle;
-}
-</style>

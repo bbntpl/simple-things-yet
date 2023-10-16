@@ -6,7 +6,7 @@
 				<CategoryTile
 					v-for="category in categories"
 					:key="category.id"
-					:totalBlogs="category.totalBlogs"
+					:totalBlogs="category.publishedBlogs.length"
 					:categoryName="category.name"
 					:categorySlug="category.slug"
 					:categoryDesc="category.description"
@@ -28,13 +28,14 @@
 
 <script>
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import UncategorizedImage from '@/assets/images/cat_uncategorized.jpg';
 
 import { fetchTotalPublishedBlogsWithUnsetCategory } from '@/api/blogService';
 import MainWrapper from '@/components/layouts/MainWrapper';
 import { useCategoriesStore } from '@/stores/categories';
 import CategoryTile from '@/components/category/CategoryTile';
+import { execInit } from '@/utils/helpers';
 
 export default {
 	name: 'BlogCategoriesView',
@@ -45,33 +46,39 @@ export default {
 	// eslint-disable-next-line max-lines-per-function
 	setup() {
 		const categoriesStore = useCategoriesStore();
-		const { categories } = storeToRefs(categoriesStore);
 
-		const allCategories = ref([]);
+		const { categories, sortedCategoriesByNameAsc } =
+			storeToRefs(categoriesStore);
+		const allCategories = ref(sortedCategoriesByNameAsc || []);
 		const totalUncategorizedBlogs = ref(0);
 
+		watch(
+			categories,
+			(updatedCategories) => {
+				allCategories.value.push(...updatedCategories);
+			},
+			{ deep: true },
+		);
+
 		async function fetchDataAndSet() {
-			await categoriesStore.addCategories({ limit: 100 });
+			await categoriesStore.addCategories({ limit: 50 });
 		}
 
 		onMounted(async () => {
-			if (categories.value.length === 0) {
-				fetchDataAndSet();
+			if (categoriesStore.isDataReady()) {
+				await execInit(fetchDataAndSet, {
+					errMsg: 'Something went wrong when fetching categories',
+				});
 			}
+
 			if (totalUncategorizedBlogs.value === 0) {
 				const response = await fetchTotalPublishedBlogsWithUnsetCategory();
 				totalUncategorizedBlogs.value = response.blogsLength;
 			}
 		});
 
-		watchEffect(() => {
-			if (categoriesStore.isDataReady) {
-				allCategories.value.push(...categories.value);
-			}
-		});
-
 		return {
-			categories: allCategories.value,
+			categories: computed(() => allCategories.value),
 			UncategorizedImage,
 			totalUncategorizedBlogs,
 		};
