@@ -9,6 +9,11 @@
 
 	--max-width: 1280px;
 
+
+	--blog-title-light-text-color: #ffffcc;
+	--blog-desc-light-text-color: #c0c0c0;
+	--blog-details-light-text-color: #666666;
+
 	/* overridden themes */
 	--el-menu-hover-text-color: #8d8802;
 	--el-menu-hover-bg-color: #fffeda;

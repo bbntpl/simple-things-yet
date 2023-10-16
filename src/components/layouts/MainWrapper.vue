@@ -12,7 +12,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .main {
 	display: flex;
 	justify-content: center;
@@ -28,5 +28,6 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	flex: 1 0 0;
+	width: 100%;
 }
 </style>

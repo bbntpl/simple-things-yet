@@ -8,16 +8,41 @@ const baseUrl = '/categories';
  * @returns  {Promise<Object|Error>} The collection of categories (promised)
  * @throws {Error} Throws an error if the fetch operation falis
  */
-export const fetchCategories = async (queries) => {
+export const fetchCategoriesWithPublishedBlogs = async (queries) => {
 	const queryString = new URLSearchParams({
 		skip: queries.skip || 0,
 		limit: queries.limit || 100,
 		sort: queries.sort || 'asc',
+		excludeIds: queries.excludeIds || [],
 	}).toString();
 
 	try {
 		const response = await api.get(
 			`${baseUrl}/with-published-blogs?${queryString}`,
+		);
+		return response.data;
+	} catch (error) {
+		throw new Error(error);
+	}
+};
+
+/**
+ * Fetches array of categories with published blogs
+ * @param {Object} queries - The queries that contributes to arrange the set of categories that'll be fetched
+ * @returns  {Promise<Object|Error>} Collection of categories (promised)
+ * @throws {Error} Throws an error if the fetch operation falis
+ */
+export const fetchCategoriesWithLatestBlogs = async (queries) => {
+	const queryString = new URLSearchParams({
+		skip: queries.skip || 0,
+		limit: queries.limit || 50,
+		sort: queries.sort || 'asc',
+		excludeIds: queries.excludeIds || [],
+	}).toString();
+
+	try {
+		const response = await api.get(
+			`${baseUrl}/with-latest-blogs?${queryString}`,
 		);
 		return response.data;
 	} catch (error) {
