@@ -2,6 +2,7 @@
   background: #fff;
   overflow: hidden;
   border-radius: 3px;
+  max-width: 950px;
 }
 
 .blog-thumbnail>img {
@@ -10,13 +11,12 @@
 }
 
 .blog-content {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   justify-items: flex-start;
+  gap: 1rem;
 }
 
 .blog-content>* {
-  margin-bottom: 1.2rem;
   text-align: left;
 }
 
@@ -26,13 +26,10 @@
   gap: 9px;
   padding: 4px 10px;
   border-radius: 4px;
-  flex-direction: row;
   align-items: center;
-  margin: 3px 0 0 0;
 }
 
 .blog-desc {
-  width: 100%;
   font-size: 14px;
   opacity: .8;
   line-height: 1.4rem;
@@ -41,9 +38,10 @@
 .blog-details {
   font-size: 12px;
   opacity: .9;
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1rem;
   align-items: flex-start;
-
 }
 
 .blog-title {
@@ -52,45 +50,65 @@
   padding: 4px 0;
 }
 
-.blog-card-link {
+.blog-link {
   text-decoration: none;
 }
 
 [class^='blog-card'] {
+  max-width: 100%;
+  min-width: 280px;
+}
+
+.blog-card--small, .blog-card--medium, .blog-card--large {
   display: flex;
+  width: 100%;
   flex-direction: column;
   gap: 1rem;
-  max-width: 100%;
-  flex: 1;
 }
-
-.blog-card--small {
-  width: 420px;
-}
-
-.blog-card--medium {
-  width: 658px;
-}
-
-.blog-card--large {
-  width: 1080px;
-}
-
-[class$='blog-card'] {
-  display: flex;
-  flex-direction: column;
-}
-
-/* [class^='full-width'] {} */
 
 @media (min-width: 768px) {
-  [class^='blog-card'] {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5rem;
+  .blog-card--small {
+    width: 325px;
   }
 
-  [class^='blog-card']>* {
-    flex: 1;
+  .blog-card--medium {
+    flex-direction: column;
+    width: 345px;
+  }
+
+  .blog-card--large {
+    flex-direction: row;
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .blog-card--small {
+    width: 350px;
+  }
+
+  .blog-card--medium {
+    flex-direction: row;
+    width: 450px;
+  }
+
+  .blog-card--large {
+    flex-direction: row;
+    gap: 1.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .blog-card--small {
+    width: 375px;
+  }
+
+  .blog-card--medium {
+    width: 500px;
+  }
+
+  .blog-card--large {
+    flex-direction: row;
+    gap: 2rem;
   }
 }

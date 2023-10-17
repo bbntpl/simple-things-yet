@@ -1,5 +1,5 @@
 .blogs-section {
-  padding: 2rem 0;
+  padding: 2rem 0 5rem 0;
   width: calc(100vw - 15px);
   display: flex;
   justify-content: center;
@@ -17,8 +17,10 @@
 
 .blogs-collection {
   display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
   flex-wrap: wrap;
-  gap: 4rem;
+  gap: 4rem 2.6rem;
   width: var(--max-width);
   max-width: 100%;
   padding: 1.1rem 2rem;

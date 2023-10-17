@@ -35,8 +35,8 @@
 			<BlogCard
 				v-for="(blog, index) in category.publishedBlogs"
 				:key="`category_${blog.id}`"
-				:variantType="index === 0 ? 'TitleDescDate' : 'TitleOnly'"
-				:size="index === 0 ? 'large' : 'medium'"
+				:variantType="index === 0 ? 'TitleDescDate' : 'TitleDesc'"
+				size="large"
 				:blog="blog"
 				:blogStyles="{ ...homepageSectionsStyles[categoryIndex].blogStyles }"
 			/>
