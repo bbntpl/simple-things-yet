@@ -65,9 +65,22 @@
 }
 
 .copyright {
-	font-size: 16px;
+	font-size: 13px;
 }
 
 .links-list-label {
 	font-weight: bold;
+}
+
+.el-link {
+	opacity: .8;
+}
+
+.el-link {
+	--el-link-hover-text-color: var(--shark-color);
+	--el-link-text-color: var(--shark-color);
+}
+
+.el-link:hover {
+	opacity: 9;
 }

@@ -1,6 +1,5 @@
 <template>
 	<div class="tertiary-bg footer-layout">
-		<div class="divider" />
 		<div class="footer-content">
 			<div class="footer-content__upper">
 				<img

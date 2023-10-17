@@ -53,10 +53,6 @@
 	background-color: var(--iron-color);
 }
 
-.footer-layout>.divider {
-	background-color: var(--white-color);
-}
-
 .divider {
 	height: 1px;
 	width: 100%;
