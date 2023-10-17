@@ -46,7 +46,7 @@ export const convertToQueryUrl = (queries) => {
 			value.forEach((v) => params.append(key, v));
 		}
 	}
-
+	console.log(params);
 	return params.toString();
 };
 

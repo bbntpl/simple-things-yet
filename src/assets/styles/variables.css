@@ -10,9 +10,9 @@
 	--max-width: 1280px;
 
 
-	--blog-title-light-color-color: #ffffcc;
-	--blog-desc-light-color-color: #c0c0c0;
-	--blog-details-light-color-color: #666666;
+	--golden-stain-color: #ffffcc;
+	--silver-color: #c0c0c0;
+	--dark-gray-color: #666666;
 
 	/* overridden themes */
 	--el-menu-hover-text-color: #8d8802;

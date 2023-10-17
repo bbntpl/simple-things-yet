@@ -24,6 +24,7 @@
 				}"
 			/>
 		</BlogSection>
+		<a class="el-button blogs-btn" href="./#/blogs">Browse all blogs</a>
 		<BlogSection
 			v-for="(category, categoryIndex) in categoriesToShowcase"
 			:headerText="category.name"
