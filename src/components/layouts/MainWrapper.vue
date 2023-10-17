@@ -18,7 +18,6 @@ export default {
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
-	align-self: stretch;
 	width: 100%;
 }
 

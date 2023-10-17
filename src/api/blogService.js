@@ -1,3 +1,4 @@
+import { convertToQueryUrl } from '@/utils/helpers';
 import api, { requestOptions } from './';
 
 const baseUrl = '/blogs';
@@ -8,12 +9,7 @@ const baseUrl = '/blogs';
  * @throws {Error} Throws an error if the fetch operation fails.
  */
 export const fetchPublishedBlogs = async (queries) => {
-	const queryString = new URLSearchParams({
-		skip: queries.skip || 0,
-		limit: queries.limit || 5,
-		sort: queries.sort || 'latest',
-	}).toString();
-
+	const queryString = convertToQueryUrl(queries);
 	try {
 		const response = await api.get(`${baseUrl}/published?${queryString}`);
 		return response.data;

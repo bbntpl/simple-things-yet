@@ -11,7 +11,7 @@
 		/>
 	</transition>
 	<div class="author-contact-form-wrapper">
-		<h2 class="author-contact-form__title primary-text">Contact Me</h2>
+		<h2 class="author-contact-form__title primary-color">Contact Me</h2>
 		<el-text size="large">
 			Please fill up the form below to send me a message.
 		</el-text>

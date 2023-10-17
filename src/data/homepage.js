@@ -1,36 +1,45 @@
 const lightStyles = {
 	sectionStyles: {
-		headerTextColor: 'secondary-text',
+		headerTextColorClass: 'secondary-color',
 		bgColorClass: '',
 	},
 	blogStyles: {
-		titleColorClass: 'primary-text',
-		descColorClass: 'shark-text',
-		detailsColorClass: 'shark-text',
+		titleColorClass: 'primary-color',
+		descColorClass: 'primary-color',
+		detailsColorClass: 'primary-color',
+		commentBgClass: 'primary-bg',
+		commentColorClass: 'light-color',
+		commentIconFillClass: 'light-color',
 	},
 };
 
 const darkStyles = {
 	sectionStyles: {
-		headerTextColor: 'highlight-text',
-		bgColorClass: 'primary-background',
+		headerTextColorClass: 'light-color',
+		bgColorClass: 'primary-bg',
 	},
 	blogStyles: {
-		titleColorClass: 'light-text',
-		descColorClass: 'light-text',
-		detailsColorClass: 'light-text',
+		titleColorClass: 'light-color',
+		descColorClass: 'light-color',
+		detailsColorClass: 'light-color',
+		commentBgClass: 'light-bg',
+		commentColorClass: 'primary-color',
+		commentIconFillClass: 'primary-color',
 	},
 };
 
 const goldenStyles = {
 	sectionStyles: {
-		headerTextColor: 'primary-text',
-		bgColorClass: 'golden-background',
+		headerTextColorClass: 'primary-color',
+		bgColorClass: 'accent-bg',
 	},
 	blogStyles: {
-		titleColorClass: 'primary-text',
-		descColorClass: 'primary-text',
-		detailsColorClass: 'primary-text',
+		titleColorClass: 'primary-color',
+		descColorClass: 'primary-color',
+		detailsColorClass: 'primary-color',
+		commentBgClass: 'primary-bg',
+		commentColorClass: 'light-color',
+		commentIconFillClass: 'light-color',
 	},
 };
 

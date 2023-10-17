@@ -7,13 +7,13 @@
 					:style="{ backgroundImage: categoryImageString }"
 				/>
 				<div class="category-information">
-					<h1 class="category-title accent-text">
+					<h1 class="category-title accent-color">
 						{{ categoryName }}
 					</h1>
 					<div class="category-details">
 						<p v-if="categoryDesc">{{ categoryDesc }}</p>
-						<span class="category-details__total-blogs highlight-text">
-							<el-icon class="highlight-fill">
+						<span class="category-details__total-blogs highlight-color">
+							<el-icon class="highlight-color">
 								<Document />
 							</el-icon>
 							{{ totalBlogs }}

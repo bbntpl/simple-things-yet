@@ -1,0 +1,25 @@
+.blogs-section {
+  padding: 2rem 0;
+  width: calc(100vw - 15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.blogs-section>h1 {
+  font-size: clamp(1.4rem, 1.5vw, 3.5rem);
+  text-transform: uppercase;
+  margin-bottom: 1.8rem;
+  font-weight: 600;
+}
+
+.blogs-collection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rem;
+  width: var(--max-width);
+  max-width: 100%;
+  padding: 1.1rem 2rem;
+}

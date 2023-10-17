@@ -1,3 +1,4 @@
+import { convertToQueryUrl } from '@/utils/helpers';
 import api from './';
 
 const baseUrl = '/categories';
@@ -9,13 +10,7 @@ const baseUrl = '/categories';
  * @throws {Error} Throws an error if the fetch operation falis
  */
 export const fetchCategoriesWithPublishedBlogs = async (queries) => {
-	const queryString = new URLSearchParams({
-		skip: queries.skip || 0,
-		limit: queries.limit || 100,
-		sort: queries.sort || 'asc',
-		excludeIds: queries.excludeIds || [],
-	}).toString();
-
+	const queryString = convertToQueryUrl(queries);
 	try {
 		const response = await api.get(
 			`${baseUrl}/with-published-blogs?${queryString}`,
@@ -33,13 +28,7 @@ export const fetchCategoriesWithPublishedBlogs = async (queries) => {
  * @throws {Error} Throws an error if the fetch operation falis
  */
 export const fetchCategoriesWithLatestBlogs = async (queries) => {
-	const queryString = new URLSearchParams({
-		skip: queries.skip || 0,
-		limit: queries.limit || 50,
-		sort: queries.sort || 'asc',
-		excludeIds: queries.excludeIds || [],
-	}).toString();
-
+	const queryString = convertToQueryUrl(queries);
 	try {
 		const response = await api.get(
 			`${baseUrl}/with-latest-blogs?${queryString}`,

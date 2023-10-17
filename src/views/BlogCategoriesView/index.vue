@@ -1,7 +1,7 @@
 <template>
 	<MainWrapper>
 		<div id="blog-categories">
-			<h1 class="primary-text">Blog Categories</h1>
+			<h1 class="primary-color">Blog Categories</h1>
 			<div class="category-tiles">
 				<CategoryTile
 					v-for="category in categories"
@@ -28,7 +28,7 @@
 
 <script>
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, watch, computed } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import UncategorizedImage from '@/assets/images/cat_uncategorized.jpg';
 
 import { fetchTotalPublishedBlogsWithUnsetCategory } from '@/api/blogService';
@@ -47,25 +47,15 @@ export default {
 	setup() {
 		const categoriesStore = useCategoriesStore();
 
-		const { categories, sortedCategoriesByNameAsc } =
-			storeToRefs(categoriesStore);
-		const allCategories = ref(sortedCategoriesByNameAsc || []);
+		const { categoriesByNameAsc } = storeToRefs(categoriesStore);
 		const totalUncategorizedBlogs = ref(0);
-
-		watch(
-			categories,
-			(updatedCategories) => {
-				allCategories.value.push(...updatedCategories);
-			},
-			{ deep: true },
-		);
 
 		async function fetchDataAndSet() {
 			await categoriesStore.addCategories({ limit: 50 });
 		}
 
 		onMounted(async () => {
-			if (categoriesStore.isDataReady()) {
+			if (categoriesStore.isReadyForFetch) {
 				await execInit(fetchDataAndSet, {
 					errMsg: 'Something went wrong when fetching categories',
 				});
@@ -78,7 +68,7 @@ export default {
 		});
 
 		return {
-			categories: computed(() => allCategories.value),
+			categories: computed(() => categoriesByNameAsc.value),
 			UncategorizedImage,
 			totalUncategorizedBlogs,
 		};

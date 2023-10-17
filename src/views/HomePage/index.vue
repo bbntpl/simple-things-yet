@@ -2,41 +2,40 @@
 	<MainWrapper>
 		<div class="blog-intro">
 			<h1 class="home-title">A Personal Blog</h1>
-			<p class="home-author secondary-text">By {{ authorName }}</p>
+			<p class="home-author secondary-color">By {{ authorName }}</p>
 		</div>
 		<div class="divider" />
 		<BlogSection
+			v-if="latestBlogs.length"
 			headerText="Latest Blogs"
 			:sectionStyles="{
 				bgColorClass: '',
-				headerTextColorClass: 'secondary-text',
+				headerTextColorClass: 'secondary-color',
 			}"
 		>
 			<BlogCard
 				v-for="(blog, index) in latestBlogs"
 				:key="`latest_${blog.id}`"
-				:variantType="index === 0 ? 'Full' : 'TitleOnly'"
+				:variantType="index === 0 ? 'Full' : 'TitleDescDate'"
 				:size="index === 0 ? 'large' : 'medium'"
 				:blog="blog"
 				:blogStyles="{
-					titleColorClass: 'primary-text',
-					descColorClass: 'shark-text',
-					detailsColorClass: 'shark-text',
+					...homepageSectionsStyles[1].blogStyles,
 				}"
 			/>
 		</BlogSection>
 		<BlogSection
 			v-for="(category, categoryIndex) in categoriesToShowcase"
-			headerText="Latest Blogs"
+			:headerText="category.name"
 			:sectionStyles="{
-				...homepageSectionsStyles[categoryindex].sectionStyles,
+				...homepageSectionsStyles[categoryIndex].sectionStyles,
 			}"
 			:key="category.name"
 		>
 			<BlogCard
 				v-for="(blog, index) in category.publishedBlogs"
-				:key="`latest_${blog.id}`"
-				:variantType="index === 0 ? 'Full' : 'TitleOnly'"
+				:key="`category_${blog.id}`"
+				:variantType="index === 0 ? 'TitleDescDate' : 'TitleOnly'"
 				:size="index === 0 ? 'large' : 'medium'"
 				:blog="blog"
 				:blogStyles="{ ...homepageSectionsStyles[categoryIndex].blogStyles }"
@@ -46,18 +45,18 @@
 </template>
 
 <script>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import './styles.css';
 import MainWrapper from '@/components/layouts/MainWrapper.vue';
 import BlogCard from '@/components/blog/BlogCard';
-import BlogSection from '@/components/blog/BlogSection.vue';
+import BlogSection from '@/components/blog/BlogSection';
 import { useBlogsStore } from '@/stores/blogs';
 import { useAuthorStore } from '@/stores/author';
 import { useCategoriesStore } from '@/stores/categories';
 import { execInit } from '@/utils/helpers';
-import { homepageSectionsStyles } from '@/data/homepage';
+import homepageSectionsStyles from '@/data/homepage';
 
 export default {
 	name: 'HomePage',
@@ -73,31 +72,14 @@ export default {
 		const categoriesStore = useCategoriesStore();
 
 		const { author } = storeToRefs(authorStore);
-		const { blogs } = storeToRefs(blogsStore);
+		const { getLatestBlogs } = storeToRefs(blogsStore);
+		const { categoriesWithEmbeddedBlogs } = storeToRefs(categoriesStore);
 
-		const latestBlogs = ref([]);
-		const categoriesToShowcase = ref([]);
 		const authorName = ref(author.value?.name || '');
 
 		watch(author, (updatedAuthor) => {
 			authorName.value = updatedAuthor.name;
 		});
-
-		watch(
-			categoriesStore.getCategoriesWithEmbeddedBlogs(),
-			(updatedCategories) => {
-				categoriesToShowcase.value.push(...updatedCategories);
-			},
-			{ deep: true },
-		);
-
-		watch(
-			blogs,
-			(updatedBlogs) => {
-				latestBlogs.value.push(...updatedBlogs);
-			},
-			{ deep: true },
-		);
 
 		function setupPromises() {
 			const promises = [];
@@ -109,12 +91,13 @@ export default {
 			if (blogsStore.isReadyForFetch()) {
 				promises.push(
 					blogsStore.addBlogs(null, {
+						limit: 5,
 						sort: 'latest',
 					}),
 				);
 			}
 
-			if (categoriesStore.isReadyForFetch()) {
+			if (categoriesStore.isReadyForFetch) {
 				promises.push(
 					categoriesStore.addCategoriesWithLatestBlogs({
 						limit: 4,
@@ -129,22 +112,18 @@ export default {
 		// Resolve promises for necessary data initialization
 		onMounted(async () => {
 			const promises = setupPromises();
-			console.log(promises);
 			if (promises.length === 0) return;
 
-			const resolvePromises = async () => {
-				await Promise.all(promises);
-			};
-
+			const resolvePromises = async () => await Promise.all(promises);
 			await execInit(resolvePromises, {
 				errorMsg: 'Something wrong happened during data fetch',
 			});
 		});
 
 		return {
-			latestBlogs,
+			latestBlogs: computed(() => getLatestBlogs.value(5)),
 			authorName,
-			categoriesToShowcase,
+			categoriesToShowcase: computed(() => categoriesWithEmbeddedBlogs.value),
 			homepageSectionsStyles,
 		};
 	},

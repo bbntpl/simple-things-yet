@@ -3,9 +3,9 @@ import { createPinia } from 'pinia';
 
 import ElementPlus from 'element-plus';
 import VueDOMPurifyHTML from 'vue-dompurify-html';
-import { HomeFilled, House, Document } from '@element-plus/icons-vue';
+import { HomeFilled, House, Document, Comment } from '@element-plus/icons-vue';
 
-const iconsToRegister = { HomeFilled, House, Document };
+const iconsToRegister = { HomeFilled, House, Document, Comment };
 
 import 'element-plus/dist/index.css';
 import './assets/styles/variables.css';

@@ -28,10 +28,44 @@ export const execInit = async (asyncFn, options = {}) => {
 };
 
 /**
+ * Convert an object to a query string URL.
+ * @param {Object} obj - The object to be converted to a query string.
+ * @returns {string} The query string URL.
+ */
+export const convertToQueryUrl = (queries) => {
+	const params = new URLSearchParams({
+		skip: queries.skip || 0,
+		limit: queries.limit || 12,
+		sort: queries.sort || 'asc',
+		excludeIds: queries.excludeIds || [],
+	});
+
+	for (const [key, value] of Object.entries(queries)) {
+		if (Array.isArray(value)) {
+			params.delete(key);
+			value.forEach((v) => params.append(key, v));
+		}
+	}
+
+	return params.toString();
+};
+
+/**
+ * Extract IDs of the objects.
+ * @param {Array<Object>} docs Array of objects with IDs.
+ * @returns {Array<string>} Array of IDs.
+ */
+export const extractIds = (docs) => {
+	console.log(docs);
+	if (docs.length === 0) return [];
+	return docs.map((doc) => doc.id);
+};
+
+/**
  * Extract text from the stringified html.
  * @param {string} blogContent Stringified set of HTML tags.
  * @param {number} numOfChars Number of characters for first set of chars extraction.
- * @returns Extracted plain text.
+ * @returns {string} Extracted plain text.
  */
 export const extractTextFromStringifiedHTML = (htmlString, numOfChars = 50) => {
 	// Create a temp element to convert HTML to plain text

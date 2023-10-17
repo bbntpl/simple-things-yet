@@ -24,33 +24,28 @@
 }
 
 /*** TEXT COLORS **/
-.primary-text {
+.primary-color {
 	color: var(--shark-color);
 }
 
-.light-text {
+.light-color {
 	color: var(--white-color);
 }
 
-.secondary-text {
+.secondary-color {
 	color: var(--shuttle-gray-color);
 }
 
-.tertiary-text {
+.tertiary-color {
 	color: var(--iron-color);
 }
 
-.highlight-text {
+.highlight-color {
 	color: var(--varden-color);
 }
 
-.accent-text {
+.accent-color {
 	color: var(--golden-fizz-color);
-}
-
-/*** FILL COLORS FOR ICONS ***/
-.highlight-fill {
-	fill: var(--varden-color);
 }
 
 /*** REUSABLE STYLES ***/

@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore, storeToRefs } from 'pinia';
+import { computed, ref, toRaw } from 'vue';
 
 import { useBlogsStore } from './blogs';
 
@@ -7,12 +7,15 @@ import {
 	fetchCategoriesWithLatestBlogs,
 	fetchCategoriesWithPublishedBlogs,
 } from '@/api/categoryService';
+import { extractIds } from '@/utils/helpers';
 
 // eslint-disable-next-line max-lines-per-function
 export const useCategoriesStore = defineStore('categories', () => {
+	const blogsStore = useBlogsStore();
+	const { blogs } = storeToRefs(blogsStore);
+
 	const categories = ref([]);
 	const status = ref('idle');
-	const blogsStore = useBlogsStore();
 
 	async function addCategories(queries) {
 		status.value = 'loading';
@@ -29,13 +32,8 @@ export const useCategoriesStore = defineStore('categories', () => {
 		}
 	}
 
-	function extractCategoriesIds(categories) {
-		if (categories.length === 0) return [];
-		return new Set(categories.value.map((category) => category.id));
-	}
-
 	// function filterExistingCategories(newCategories) {
-	// 	const existingCategoriesIds = extractCategoriesIds(categories);
+	// 	const existingCategoriesIds = extractIds(categories);
 	// 	return newCategories.filter(
 	// 		(category) => !existingCategoriesIds.has(category.id),
 	// 	);
@@ -46,17 +44,17 @@ export const useCategoriesStore = defineStore('categories', () => {
 		try {
 			const fetchedCategories = await fetchCategoriesWithLatestBlogs({
 				...queries,
-				excludeIds: extractCategoriesIds(categories.value),
+				excludeIds: extractIds(
+					[...categories.value, ...blogs.value].map(toRaw),
+				),
 			});
-			const extractedBlogs = [];
 
+			const extractedBlogs = [];
 			const mappedFetchedCategories = fetchedCategories.map((category) => {
 				extractedBlogs.push(...category.publishedBlogs);
 				return {
 					...category,
-					publishedBlogs: category.publishedBlogs.map((blog) => {
-						return blog.id;
-					}),
+					publishedBlogs: category.publishedBlogs.map((blog) => blog.id),
 				};
 			});
 
@@ -71,13 +69,13 @@ export const useCategoriesStore = defineStore('categories', () => {
 	}
 
 	function sortCategories(sortBy = 'asc', sortByTotalBlogs = false) {
-		const sortedCategories = [...categories.value];
+		const sortedCategories = categories.value.map(toRaw);
 
 		sortedCategories.sort((a, b) => {
 			if (sortBy === 'asc') {
-				return a.localeCompare(b);
+				return a.name.localeCompare(b);
 			} else if (sortBy === 'desc') {
-				return b.localeCompare(a);
+				return b.name.localeCompare(a);
 			}
 		});
 
@@ -90,21 +88,19 @@ export const useCategoriesStore = defineStore('categories', () => {
 		return sortedCategories;
 	}
 
-	const sortedCategoriesByNameAsc = sortCategories();
-	const sortedCategoriesByNameDesc = sortCategories('desc');
-	const sortedCategoriesByTotalBlogs = sortCategories('asc', true);
+	const categoriesByNameAsc = computed(() => sortCategories());
+	const categoriesByNameDesc = computed(() => sortCategories('desc'));
+	const categoriesByTotalBlogs = computed(() => sortCategories('asc', true));
 
-	function getCategoryById(categoryId) {
-		return categories.value.values.find((cat) => cat.id === categoryId);
-	}
+	const getCategoryById = computed(() => {
+		return (id) => categories.value.find((category) => category.id === id);
+	});
 
-	const getCategoriesWithEmbeddedBlogs = (totalBlogsLimit = 2) => {
-		return sortedCategoriesByTotalBlogs
-			.filter((category) => {
-				return category.publishedBlogs >= totalBlogsLimit;
-			})
+	const categoriesWithEmbeddedBlogs = computed(() => {
+		return categoriesByTotalBlogs.value
+			.filter((category) => category.publishedBlogs.length >= 2)
 			.map((category) => {
-				const blogIds = category.blogs;
+				const blogIds = category.publishedBlogs;
 				const publishedBlogs = blogIds.map((blogId) => {
 					return blogsStore.getBlogById(blogId);
 				});
@@ -113,21 +109,19 @@ export const useCategoriesStore = defineStore('categories', () => {
 					publishedBlogs: publishedBlogs,
 				};
 			});
-	};
+	});
 
-	function isReadyForFetch() {
-		return status.value === 'idle';
-	}
+	const isReadyForFetch = computed(() => status.value === 'idle');
 
 	return {
 		categories,
 		addCategories,
 		addCategoriesWithLatestBlogs,
 		isReadyForFetch,
-		sortedCategoriesByNameAsc,
-		sortedCategoriesByNameDesc,
-		sortedCategoriesByTotalBlogs,
+		categoriesByNameAsc,
+		categoriesByNameDesc,
+		categoriesByTotalBlogs,
 		getCategoryById,
-		getCategoriesWithEmbeddedBlogs,
+		categoriesWithEmbeddedBlogs,
 	};
 });

@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref, toRaw } from 'vue';
 
 import { fetchPublishedBlogs } from '@/api/blogService';
+import { extractIds } from '@/utils/helpers';
 
 // eslint-disable-next-line max-lines-per-function
 export const useBlogsStore = defineStore('blogs', () => {
@@ -13,29 +14,26 @@ export const useBlogsStore = defineStore('blogs', () => {
 		status.value = 'loading';
 	}
 
-	function extractBlogsIds(blogs) {
-		if (blogs.length === 0) return [];
-		return new Set(blogs.map((blog) => blog.id));
-	}
-
-	function filterExistingBlogs(newBlogs) {
-		const existingBlogsIds = extractBlogsIds(blogs.value);
-		return newBlogs.filter((blog) => !existingBlogsIds.has(blog.id));
+	function filterNewBlogs(newBlogs) {
+		const existingIds = extractIds(blogs.value.map(toRaw));
+		return newBlogs.filter((blog) => !existingIds.some((id) => id === blog.id));
 	}
 
 	async function addBlogs(newBlogs, queries = {}) {
 		startFetching();
+
 		try {
 			// If blogs to be added are passed, filter fresh ids and add it
 			if (newBlogs) {
-				blogs.value.push(filterExistingBlogs(newBlogs));
+				blogs.value.push(...filterNewBlogs(newBlogs));
 			} else {
 				// Otherwise, fetch blogs by api request and push it
 				const fetchedBlogs = await fetchPublishedBlogs({
 					...queries,
-					excludeIds: extractBlogsIds(blogs.value),
+					excludeIds: extractIds(blogs.value.map(toRaw)),
 					category: 1,
 				});
+
 				blogs.value.push(...fetchedBlogs);
 			}
 			status.value = 'succeeded';
@@ -46,13 +44,19 @@ export const useBlogsStore = defineStore('blogs', () => {
 		}
 	}
 
-	function getLatestBlogs(length) {
-		const newestBlogs = blogs.value.sort(
-			(a, b) => new Date(b.publishedAt) - new Date(a.publishedAt),
-		);
+	const getLatestBlogs = computed(() => {
+		return (length) => {
+			const newestBlogs = blogs.value.sort(
+				(a, b) => new Date(b.publishedAt) - new Date(a.publishedAt),
+			);
 
-		return newestBlogs.slice(0, length - 1);
-	}
+			return newestBlogs.slice(0, length);
+		};
+	});
+
+	const getBlogById = computed(() => {
+		return (id) => blogs.value.find((blog) => blog.id === id);
+	});
 
 	function isDataEmpty() {
 		return !blogs.value;
@@ -63,11 +67,13 @@ export const useBlogsStore = defineStore('blogs', () => {
 	}
 
 	return {
+		status,
+		blogs,
 		addBlogs,
 		isReadyForFetch,
 		isDataEmpty,
-		status,
-		blogs,
 		getLatestBlogs,
+		getBlogById,
+		filterNewBlogs,
 	};
 });
