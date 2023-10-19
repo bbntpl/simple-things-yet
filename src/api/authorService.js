@@ -12,7 +12,9 @@ export const fetchAuthor = async () => {
 		const response = await api.get(baseUrl);
 		return response.data;
 	} catch (error) {
-		throw new Error(error);
+		throw new Error(
+			'Something went wrong when fetching the author information',
+		);
 	}
 };
 

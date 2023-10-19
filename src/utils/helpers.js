@@ -7,11 +7,7 @@ import { ElLoading, ElMessage } from 'element-plus';
  * @param {Object} options Other args such as errors.
  */
 export const execInit = async (asyncFn, options = {}) => {
-	const {
-		loadingText = 'Loading...',
-		fullscreen = true,
-		errorMsg = 'Error occurred.',
-	} = options;
+	const { loadingText = 'Loading...', fullscreen = true } = options;
 
 	const loadingInstance = ElLoading.service({
 		text: loadingText,
@@ -21,7 +17,7 @@ export const execInit = async (asyncFn, options = {}) => {
 	try {
 		await asyncFn();
 	} catch (error) {
-		ElMessage.error(errorMsg);
+		ElMessage.error(options.errorMsg || error.message);
 	} finally {
 		loadingInstance.close();
 	}
@@ -33,20 +29,21 @@ export const execInit = async (asyncFn, options = {}) => {
  * @returns {string} The query string URL.
  */
 export const convertToQueryUrl = (queries) => {
+	console.log(queries);
 	const params = new URLSearchParams({
-		skip: queries.skip || 0,
-		limit: queries.limit || 12,
+		...(!queries.skip ? {} : { skip: queries.skip }),
+		...(!queries.limit ? {} : { limit: queries.limit }),
 		sort: queries.sort || 'asc',
 		excludeIds: queries.excludeIds || [],
 	});
 
-	for (const [key, value] of Object.entries(queries)) {
+	for (const [key, value] of Object.entries(params)) {
 		if (Array.isArray(value)) {
 			params.delete(key);
 			value.forEach((v) => params.append(key, v));
 		}
 	}
-	console.log(params);
+	console.log(params.toString());
 	return params.toString();
 };
 

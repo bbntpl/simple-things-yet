@@ -13,7 +13,7 @@ export const fetchComments = async () => {
 		const response = await api.get(`${baseUrl}/`);
 		return response.data;
 	} catch (error) {
-		throw new Error(error);
+		throw new Error('Something went wrong when fetching the comments');
 	}
 };
 
@@ -47,7 +47,7 @@ export const fetchReplies = async (parentCommentId) => {
 		const response = await api.get(`${baseUrl}/${parentCommentId}`);
 		return response.data;
 	} catch (error) {
-		throw new Error(error);
+		throw new Error('Something went wrong when fetching the replies');
 	}
 };
 

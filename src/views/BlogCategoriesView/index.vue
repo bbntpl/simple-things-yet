@@ -57,13 +57,13 @@ export default {
 		onMounted(async () => {
 			if (categoriesStore.isReadyForFetch) {
 				await execInit(fetchDataAndSet, {
-					errMsg: 'Something went wrong when fetching categories',
+					errorMsg: 'Something went wrong when fetching categories',
 				});
 			}
 
 			if (totalUncategorizedBlogs.value === 0) {
-				const response = await fetchTotalPublishedBlogsWithUnsetCategory();
-				totalUncategorizedBlogs.value = response.blogsLength;
+				const totalBlogs = await fetchTotalPublishedBlogsWithUnsetCategory();
+				totalUncategorizedBlogs.value = totalBlogs;
 			}
 		});
 

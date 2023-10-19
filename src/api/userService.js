@@ -15,7 +15,7 @@ export const fetchViewerRequest = async (user) => {
 		const response = await api.get(`${baseUrl}/${user.id}`);
 		return response.data;
 	} catch (error) {
-		throw new Error(error);
+		throw new Error('Your infomation has failed to load');
 	}
 };
 
@@ -23,7 +23,7 @@ export const fetchViewerRequest = async (user) => {
  * Registers a new user account.
  *
  * @param {Object} user - User registration data.
- * @returns {Promise<Object>} Returns the response data.
+ * @returns {Promise<Object|Error>} Returns the response data.
  */
 export const registerUserAccountRequest = async (user) => {
 	try {
@@ -84,7 +84,7 @@ export const deleteUserAccountRequest = async (user, token) => {
  *
  * @param {Object} user - User data for the update.
  * @param {string} token - Authentication token.
- * @returns {Promise<Object>} Returns the response data.
+ * @returns {Promise<Object|Error>} Returns the response data.
  * @throws {Error} Throws an error if the request fails.
  */
 export const updateUserInfoRequest = async (user, token) => {
@@ -99,7 +99,7 @@ export const updateUserInfoRequest = async (user, token) => {
 		if (error?.response) {
 			return error.response.data;
 		} else {
-			throw new Error(error);
+			throw new Error('Updating your info has failed.');
 		}
 	}
 };

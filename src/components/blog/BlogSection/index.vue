@@ -14,7 +14,6 @@ import './styles.css';
 
 export default {
 	name: 'BlogSection',
-	components: {},
 	props: {
 		sectionStyles: {
 			required: true,

@@ -92,6 +92,7 @@ export default {
 			if (blogsStore.isReadyForFetch()) {
 				promises.push(
 					blogsStore.addBlogs(null, {
+						skip: 0,
 						limit: 5,
 						sort: 'latest',
 					}),
@@ -101,6 +102,7 @@ export default {
 			if (categoriesStore.isReadyForFetch) {
 				promises.push(
 					categoriesStore.addCategoriesWithLatestBlogs({
+						skip: 0,
 						limit: 4,
 						sort: 'larger',
 					}),

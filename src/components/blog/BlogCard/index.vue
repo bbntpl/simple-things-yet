@@ -1,12 +1,12 @@
 <template>
 	<div :class="`blog-card--${size}`">
-		<a :href="`${urlRoot}/blog/${blog.id} thumbnail-link`">
+		<a :href="`${urlRoot}/#/blog/${blog.id} thumbnail-link`">
 			<div class="blog-thumbnail">
 				<img :src="blogImageSrc" :alt="blog.title" />
 			</div>
 		</a>
 
-		<a :href="`${urlRoot}/blog/${blog.id}`" class="blog-link">
+		<a :href="`${urlRoot}/#/blog/${blog.id}`" class="blog-link">
 			<div class="blog-content">
 				<span :class="`blog-details ${blogStyles.detailsColorClass}`">
 					<p v-if="variantType === 'Full' || variantType === 'TitleDescDate'">

@@ -14,9 +14,10 @@ export const fetchPublishedBlogs = async (queries) => {
 		const response = await api.get(`${baseUrl}/published?${queryString}`);
 		return response.data;
 	} catch (error) {
-		throw new Error(error);
+		throw new Error('Something went wrong when fetching the published blogs');
 	}
 };
+
 /**
  * Fetches total amount of published blogs with unset category.
  * @returns {Promise<Object>} Object that contains the amount of blogs.
@@ -25,9 +26,25 @@ export const fetchPublishedBlogs = async (queries) => {
 export const fetchTotalPublishedBlogsWithUnsetCategory = async () => {
 	try {
 		const response = await api.get(`${baseUrl}/published/unset-category`);
-		return response.data;
+		return response.data.size;
 	} catch (error) {
-		throw new Error(error);
+		throw new Error(
+			'Something went wrong when fetching total blogs without categories',
+		);
+	}
+};
+
+/**
+ * Fetches total amount of published blogs.
+ * @returns {Promise<Object>} Object that contains the amount of published blogs.
+ * @throws {Error} Throws an error if the fetch operation fails.
+ */
+export const fetchTotalPublishedBlogs = async () => {
+	try {
+		const response = await api.get(`${baseUrl}/published/total-blogs`);
+		return response.data.size;
+	} catch (error) {
+		throw new Error('Something went wrong when fetching total published blogs');
 	}
 };
 
