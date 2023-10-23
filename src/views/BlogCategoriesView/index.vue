@@ -5,7 +5,7 @@
 			<div class="category-tiles">
 				<CategoryTile
 					v-for="category in categories"
-					:key="category.id"
+					:key="category.slug"
 					:totalBlogs="category.publishedBlogs.length"
 					:categoryName="category.name"
 					:categorySlug="category.slug"
@@ -51,11 +51,11 @@ export default {
 		const totalUncategorizedBlogs = ref(0);
 
 		async function fetchDataAndSet() {
-			await categoriesStore.addCategories({ limit: 50 });
+			await categoriesStore.addCategories({ limit: null });
 		}
 
 		onMounted(async () => {
-			if (categoriesStore.isReadyForFetch) {
+			if (categoriesStore.isReadyToFetch) {
 				await execInit(fetchDataAndSet, {
 					errorMsg: 'Something went wrong when fetching categories',
 				});

@@ -15,7 +15,7 @@ export const execInit = async (asyncFn, options = {}) => {
 	});
 
 	try {
-		await asyncFn();
+		return await asyncFn();
 	} catch (error) {
 		ElMessage.error(options.errorMsg || error.message);
 	} finally {
@@ -24,26 +24,42 @@ export const execInit = async (asyncFn, options = {}) => {
 };
 
 /**
+ * Check if the loading instance of the element plus is active or not.
+ * @param {Object} options Loading text and fullscreen flag.
+ * @returns The status of loading instance.
+ */
+export const isLoading = (options) => {
+	const { loadingText = 'Loading...', fullscreen = true } = options;
+
+	const loadingInstance = ElLoading.service({
+		text: loadingText,
+		fullscreen,
+	});
+
+	return !loadingInstance.closed();
+};
+
+/**
  * Convert an object to a query string URL.
  * @param {Object} obj - The object to be converted to a query string.
  * @returns {string} The query string URL.
  */
 export const convertToQueryUrl = (queries) => {
-	console.log(queries);
 	const params = new URLSearchParams({
+		...queries,
 		...(!queries.skip ? {} : { skip: queries.skip }),
 		...(!queries.limit ? {} : { limit: queries.limit }),
 		sort: queries.sort || 'asc',
 		excludeIds: queries.excludeIds || [],
 	});
 
-	for (const [key, value] of Object.entries(params)) {
+	for (const [key, value] of Object.entries(queries)) {
 		if (Array.isArray(value)) {
 			params.delete(key);
 			value.forEach((v) => params.append(key, v));
 		}
 	}
-	console.log(params.toString());
+
 	return params.toString();
 };
 

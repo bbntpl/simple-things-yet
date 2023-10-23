@@ -24,7 +24,12 @@
 				}"
 			/>
 		</BlogSection>
-		<a class="el-button blogs-btn" href="./#/blogs">Browse all blogs</a>
+		<a
+			v-if="latestBlogs.length > 0"
+			class="el-button blogs-btn"
+			href="./#/blogs"
+			>Browse all blogs</a
+		>
 		<BlogSection
 			v-for="(category, categoryIndex) in categoriesToShowcase"
 			:headerText="category.name"
@@ -34,9 +39,10 @@
 			:key="category.name"
 		>
 			<BlogCard
-				v-for="(blog, index) in category.publishedBlogs"
+				v-for="blog in category.publishedBlogs"
+				:v-if="typeof blog !== 'string'"
 				:key="`category_${blog.id}`"
-				:variantType="index === 0 ? 'TitleDescDate' : 'TitleDesc'"
+				variantType="TitleDescDate"
 				size="large"
 				:blog="blog"
 				:blogStyles="{ ...homepageSectionsStyles[categoryIndex].blogStyles }"
@@ -48,7 +54,6 @@
 <script>
 import { onMounted, ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-
 import './styles.css';
 import MainWrapper from '@/components/layouts/MainWrapper.vue';
 import BlogCard from '@/components/blog/BlogCard';
@@ -58,6 +63,7 @@ import { useAuthorStore } from '@/stores/author';
 import { useCategoriesStore } from '@/stores/categories';
 import { execInit } from '@/utils/helpers';
 import homepageSectionsStyles from '@/data/homepage';
+import { fetchPublishedBlogById } from '@/api/blogService';
 
 export default {
 	name: 'HomePage',
@@ -73,25 +79,40 @@ export default {
 		const categoriesStore = useCategoriesStore();
 
 		const { author } = storeToRefs(authorStore);
-		const { getLatestBlogs } = storeToRefs(blogsStore);
+		const { blogs, getLatestBlogs } = storeToRefs(blogsStore);
 		const { categoriesWithEmbeddedBlogs } = storeToRefs(categoriesStore);
-
 		const authorName = ref(author.value?.name || '');
 
 		watch(author, (updatedAuthor) => {
 			authorName.value = updatedAuthor.name;
 		});
 
+		watch(blogs, (updatedBlogs) => {
+			console.log(updatedBlogs);
+		});
+
+		watch(categoriesWithEmbeddedBlogs, (updatedCategoriesWithEmbeddedBlogs) => {
+			updatedCategoriesWithEmbeddedBlogs.forEach((cat) => {
+				return cat.publishedBlogs.forEach((blog) => {
+					if (typeof blog === 'string') {
+						fetchPublishedBlogById(blog).then((result) => {
+							blogsStore.addExtractedBlogs(result);
+						});
+					}
+				});
+			});
+		});
+
 		function setupPromises() {
 			const promises = [];
 
-			if (authorStore.isReadyForFetch()) {
+			if (authorStore.isReadyToFetch) {
 				promises.push(authorStore.initializeAuthor());
 			}
 
-			if (blogsStore.isReadyForFetch()) {
+			if (blogsStore.isReadyToFetch) {
 				promises.push(
-					blogsStore.addBlogs(null, {
+					blogsStore.addFetchedBlogs({
 						skip: 0,
 						limit: 5,
 						sort: 'latest',
@@ -99,7 +120,7 @@ export default {
 				);
 			}
 
-			if (categoriesStore.isReadyForFetch) {
+			if (categoriesStore.isReadyToFetch) {
 				promises.push(
 					categoriesStore.addCategoriesWithLatestBlogs({
 						skip: 0,

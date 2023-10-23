@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref, toRaw } from 'vue';
 
 import {
+	fetchPublishedBlogBySlug,
 	fetchPublishedBlogs,
 	fetchTotalPublishedBlogs,
 } from '@/api/blogService';
@@ -31,28 +32,42 @@ export const useBlogsStore = defineStore('blogs', () => {
 		}
 	}
 
-	async function addBlogs(newBlogs, queries = {}) {
+	async function addBlogBySlug(slug) {
 		status.value = 'loading';
 		try {
-			// If blogs to be added are passed, filter fresh ids and add it
-			if (newBlogs) {
-				blogs.value.push(...filterNewBlogs(newBlogs));
-			} else {
-				// Otherwise, fetch blogs by api request and push it
-				const fetchedBlogs = await fetchPublishedBlogs({
-					...queries,
-					excludeIds: extractIds(blogs.value.map(toRaw)),
-					category: 1,
-				});
+			const fetchedBlog = await fetchPublishedBlogBySlug(slug);
 
-				blogs.value.push(...fetchedBlogs);
-			}
+			blogs.value.push(fetchedBlog);
 			status.value = 'succeeded';
 		} catch (err) {
 			status.value = 'failed';
-			console.log('Failed to fetch set of blogs', err.message);
 			throw err;
 		}
+	}
+
+	async function addFetchedBlogs(queries) {
+		status.value = 'loading';
+		try {
+			// Fetch blogs by api request and update the state
+			const fetchedBlogs = await fetchPublishedBlogs({
+				...queries,
+				excludeIds: extractIds(blogs.value.map(toRaw)),
+				category: 1,
+			});
+			blogs.value.push(...fetchedBlogs);
+		} catch (err) {
+			status.value = 'failed';
+			console.error('Failed to fetch published blogs', err.message);
+			throw err;
+		}
+	}
+
+	function addExtractedBlogs(newBlogs) {
+		blogs.value.push(...filterNewBlogs(newBlogs));
+	}
+
+	function addExtractedBlog(newBlog) {
+		blogs.value.push(...filterNewBlogs([newBlog]));
 	}
 
 	const paginatedBlogs = computed(() => {
@@ -66,32 +81,35 @@ export const useBlogsStore = defineStore('blogs', () => {
 	});
 
 	const getLatestBlogs = computed(() => {
-		return (length) => paginatedBlogs(0, length);
+		return (length) => paginatedBlogs.value(0, length);
 	});
 
 	const getBlogById = computed(() => {
 		return (id) => blogs.value.find((blog) => blog.id === id);
 	});
 
-	function isDataEmpty() {
-		return !blogs.value;
-	}
+	const getBlogBySlug = computed(() => {
+		return (slug) => blogs.value.find((blog) => blog.slug === slug);
+	});
 
-	function isReadyForFetch() {
-		return status.value === 'idle';
-	}
+	const isReadyToFetch = computed(() => {
+		return status.value === 'idle' || status.value === 'succeeded';
+	});
 
 	return {
 		status,
 		blogs,
-		addBlogs,
-		isReadyForFetch,
-		isDataEmpty,
+		addExtractedBlogs,
+		addExtractedBlog,
+		addFetchedBlogs,
+		isReadyToFetch,
 		getLatestBlogs,
 		getBlogById,
+		getBlogBySlug,
 		filterNewBlogs,
 		totalPublishedBlogs,
 		initializeTotalPublishedBlogs,
 		paginatedBlogs,
+		addBlogBySlug,
 	};
 });

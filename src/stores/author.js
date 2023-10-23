@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { fetchAuthor } from '@/api/authorService';
 
@@ -26,13 +26,13 @@ export const useAuthorStore = defineStore('author', () => {
 		}
 	}
 
-	function isReadyForFetch() {
+	const isReadyToFetch = computed(() => {
 		return status.value === 'idle';
-	}
+	});
 
 	return {
 		author,
-		isReadyForFetch,
+		isReadyToFetch,
 		initializeAuthor,
 	};
 });

@@ -51,7 +51,7 @@ export default {
 		});
 
 		onMounted(async () => {
-			if (authorStore.isReadyForFetch()) {
+			if (authorStore.isReadyToFetch) {
 				await execInit(authorStore.initializeAuthor, {
 					errorMsg: 'Something wrong happened during data fetch',
 				});

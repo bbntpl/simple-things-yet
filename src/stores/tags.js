@@ -47,7 +47,7 @@ export const useTagsStore = defineStore('tags', () => {
 		return (id) => tags.value.find((tag) => tag.id === id);
 	});
 
-	const isReadyForFetch = computed(
+	const isReadyToFetch = computed(
 		() => status.value === 'idle' || status.value === 'succeeded',
 	);
 
@@ -58,7 +58,7 @@ export const useTagsStore = defineStore('tags', () => {
 		addAllTags,
 		addTagById,
 		getTagById,
-		isReadyForFetch,
+		isReadyToFetch,
 		rawTags,
 	};
 });

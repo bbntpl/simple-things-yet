@@ -30,7 +30,7 @@ export default {
 		const getPromises = async () => {
 			const promises = [];
 
-			if (tagsStore.isReadyForFetch) {
+			if (tagsStore.isReadyToFetch) {
 				promises.push(tagsStore.addAllTags());
 			}
 
@@ -39,7 +39,7 @@ export default {
 			}
 
 			promises.push(
-				blogsStore.addBlogs({
+				blogsStore.addFetchedBlogs({
 					skip: 0,
 					limit: 8,
 				}),
@@ -48,7 +48,12 @@ export default {
 
 		onMounted(async () => {
 			const promises = getPromises();
-			await execInit(promises);
+
+			const resolvePromises = await Promise.all(promises);
+			const result = await execInit(resolvePromises, {
+				errorMsg: 'Something went wrong when fetching the blogs',
+			});
+			console.log(result);
 		});
 
 		return {

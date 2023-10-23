@@ -1,11 +1,14 @@
+/// <reference path="../utils/types.js" />
+
 import { convertToQueryUrl } from '@/utils/helpers';
+
 import api from './';
 
 const baseUrl = '/tags';
 
 /**
  * Fetches array of tags
- * @param {Object} queries - The queries which arranges the exact data will be fetched
+ * @param {DataFetchQueries} queries - The queries which arranges the exact data will be fetched
  * @returns {Promise<Object[]>} Array of tags if resolved
  * @throws {Error} Otherwise, throws an error
  */
@@ -21,6 +24,7 @@ export const fetchTags = async (queries) => {
 
 /**
  * Fetches a tag by ID
+ * @param {string} tagId - Tag ID
  * @returns {Promise<Object>} Promised tag
  * @throws {Error} Otherwise, throws an error
  */

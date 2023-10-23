@@ -9,7 +9,7 @@ const baseUrl = '/author/';
  */
 export const fetchAuthor = async () => {
 	try {
-		const response = await api.get(baseUrl);
+		const response = await api.get(`${baseUrl}/info`);
 		return response.data;
 	} catch (error) {
 		throw new Error(

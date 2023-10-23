@@ -17,30 +17,34 @@ export const useCategoriesStore = defineStore('categories', () => {
 	const categories = ref([]);
 	const status = ref('idle');
 
+	function changeStatusTo(newValue) {
+		if (status.value === newValue) return;
+		if (status.value !== 'fully-fetched') {
+			status.value = newValue;
+		}
+	}
+
 	async function addCategories(queries) {
-		status.value = 'loading';
+		changeStatusTo('loading');
 		try {
 			const fetchedCategories = await fetchCategoriesWithPublishedBlogs(
 				queries,
 			);
 			categories.value.push(...fetchedCategories);
-			status.value = 'succeeded';
+			if (queries?.limit === null) {
+				changeStatusTo('fully-fetched');
+			} else {
+				changeStatusTo('succeeded');
+			}
 		} catch (err) {
-			status.value = 'failed';
+			changeStatusTo('failed');
 			console.error('Failed to fetch set of categories', err);
 			throw err;
 		}
 	}
 
-	// function filterExistingCategories(newCategories) {
-	// 	const existingCategoriesIds = extractIds(categories);
-	// 	return newCategories.filter(
-	// 		(category) => !existingCategoriesIds.has(category.id),
-	// 	);
-	// }
-
 	async function addCategoriesWithLatestBlogs(queries) {
-		status.value = 'loading';
+		changeStatusTo('loading');
 		try {
 			const fetchedCategories = await fetchCategoriesWithLatestBlogs({
 				...queries,
@@ -59,10 +63,10 @@ export const useCategoriesStore = defineStore('categories', () => {
 			});
 
 			categories.value.push(...mappedFetchedCategories);
-			blogsStore.addBlogs(extractedBlogs);
-			status.value = 'succeeded';
+			blogsStore.addExtractedBlogs(extractedBlogs);
+			changeStatusTo('succeeded');
 		} catch (err) {
-			status.value = 'failed';
+			changeStatusTo('failed');
 			console.error('Failed to fetch set of categories', err);
 			throw err;
 		}
@@ -102,8 +106,13 @@ export const useCategoriesStore = defineStore('categories', () => {
 			.map((category) => {
 				const blogIds = category.publishedBlogs;
 				const publishedBlogs = blogIds.map((blogId) => {
-					return blogsStore.getBlogById(blogId);
+					const blog = blogsStore.getBlogById(blogId);
+					if (!blog) {
+						return blogId;
+					}
+					return blog;
 				});
+
 				return {
 					name: category.name,
 					publishedBlogs: publishedBlogs,
@@ -111,13 +120,13 @@ export const useCategoriesStore = defineStore('categories', () => {
 			});
 	});
 
-	const isReadyForFetch = computed(() => status.value === 'idle');
+	const isReadyToFetch = computed(() => status.value === 'idle');
 
 	return {
 		categories,
 		addCategories,
 		addCategoriesWithLatestBlogs,
-		isReadyForFetch,
+		isReadyToFetch,
 		categoriesByNameAsc,
 		categoriesByNameDesc,
 		categoriesByTotalBlogs,

@@ -22,8 +22,8 @@ const routes = [
 		component: () => import('../views/FAQView'),
 	},
 	{
-		path: '/blog/:id',
-		name: 'blog-article',
+		path: '/blog/:slug',
+		name: 'blog-page',
 		component: () => import('../views/BlogPage'),
 	},
 	{

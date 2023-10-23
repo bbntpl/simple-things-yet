@@ -61,7 +61,7 @@ export default {
 			setTimeout(() => {
 				count.value += ITEM_PER_LOAD;
 				execInit(
-					blogsStore.addBlogs({
+					blogsStore.addFetchedBlogs({
 						skip: count.value / ITEM_PER_LOAD,
 						limit: ITEM_PER_LOAD,
 					}),

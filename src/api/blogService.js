@@ -19,6 +19,36 @@ export const fetchPublishedBlogs = async (queries) => {
 };
 
 /**
+ * Fetches published blog by slug.
+ * @returns {Promise<Object>} Promise of a published blog.
+ * @throws {Error} Throws an error if the fetch operation fails.
+ */
+export const fetchPublishedBlogBySlug = async (slug) => {
+	const queryString = convertToQueryUrl({ slug });
+	try {
+		const response = await api.get(`${baseUrl}/published/doc?${queryString}`);
+		return response.data;
+	} catch (error) {
+		throw new Error('Something went wrong when fetching the published blogs');
+	}
+};
+
+/**
+ * Fetches published blog by ID.
+ * @returns {Promise<Object>} Promise of a published blog.
+ * @throws {Error} Throws an error if the fetch operation fails.
+ */
+export const fetchPublishedBlogById = async (id) => {
+	const queryString = convertToQueryUrl({ id });
+	try {
+		const response = await api.get(`${baseUrl}/published/doc?${queryString}`);
+		return response.data;
+	} catch (error) {
+		throw new Error('Something went wrong when fetching a blog');
+	}
+};
+
+/**
  * Fetches total amount of published blogs with unset category.
  * @returns {Promise<Object>} Object that contains the amount of blogs.
  * @throws {Error} Throws an error if the fetch operation fails.
