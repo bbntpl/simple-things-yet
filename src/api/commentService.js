@@ -3,25 +3,10 @@ import api, { requestOptions } from '.';
 const baseUrl = '/comments';
 
 /**
- * Fetches existing comments
- *
- * @returns {Promise<Object[]>} Returns array of existing comments.
- * @throws {Error} Throws and error if the request fails.
- */
-export const fetchComments = async () => {
-	try {
-		const response = await api.get(`${baseUrl}/`);
-		return response.data;
-	} catch (error) {
-		throw new Error('Something went wrong when fetching the comments');
-	}
-};
-
-/**
  * Fetches a comment object
- *
+ * @async
  * @param {string} parentCommentId - Parent comment ID of the comment.
- * @returns {Promise<Object|Error>} Returns an existing comment or error if request fails.
+ * @returns {Promise<Comment|Error>} Returns an existing comment or error if request fails.
  */
 export const fetchComment = async (parentCommentId) => {
 	try {
@@ -29,34 +14,36 @@ export const fetchComment = async (parentCommentId) => {
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
 };
 
 /**
- * Fetches existing replies
- *
- * @param {string} parentCommentId - Parent comment ID of the reply.
- * @returns {Promise<Object[]>} Returns an existing reply.
- * @throws {Error} Throws an error if the request fails.
+ * Fetches replies to a comment
+ * @async
+ * @param {string} parentCommentId - Parent comment ID of the reply
+ * @returns {Promise<Comment[]|Error>} Returns an existing comment or error if request fails
  */
 export const fetchReplies = async (parentCommentId) => {
 	try {
-		const response = await api.get(`${baseUrl}/${parentCommentId}`);
+		const response = await api.get(`${baseUrl}/${parentCommentId}/replies`);
 		return response.data;
 	} catch (error) {
-		throw new Error('Something went wrong when fetching the replies');
+		if (error.response) {
+			// Return error data for UI display
+			return error.response.data;
+		}
 	}
 };
 
 /**
  * Creates a new comment
- *
- * @param {Object} newComment - New comment object.
+ * @async
+ * @param {NewComment} newComment - New comment object.
  * @param {string} token - Authentication token.
- * @returns {Promise<Object|Error>} Returns new comment data or error response data.
+ * @returns {Promise<Comment|Error>} Returns new comment data or error response data.
  */
 export const createComment = async (newComment, token) => {
 	try {
@@ -68,7 +55,7 @@ export const createComment = async (newComment, token) => {
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
@@ -76,13 +63,15 @@ export const createComment = async (newComment, token) => {
 
 /**
  * Updates an existing comment
- *
- * @param {string} parentCommentId - ID of the comment to be updated.
- * @param {Object} updatedComment - Object containing the updated data for the comment.
+ * @async
+ * @param {Object} data - Object that contains parentCommentId and updatedComment
+ * @param {string} data.parentCommentId - ID of the comment to be updated.
+ * @param {CommentToUpdate} data.updatedComment - Object containing the updated data for the comment.
  * @param {string} token - Authentication token.
- * @returns {Promise<Object|Error>} Returns the updated comment data or error response data.
+ * @returns {Promise<Comment|Error>} Returns the updated comment data or error response data.
  */
-export const updateComment = async (parentCommentId, updatedComment, token) => {
+export const updateComment = async (data, token) => {
+	const { parentCommentId, updatedComment } = data;
 	try {
 		const response = await api.put(
 			`${baseUrl}/${parentCommentId}/`,
@@ -92,7 +81,7 @@ export const updateComment = async (parentCommentId, updatedComment, token) => {
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
@@ -100,7 +89,7 @@ export const updateComment = async (parentCommentId, updatedComment, token) => {
 
 /**
  * Deletes a comment
- *
+ * @async
  * @param {string} parentCommentId - ID of the comment to be deleted.
  * @param {string} token - Authentication token.
  * @returns {Promise<Object|Error>} Returns the delete response data or error response data.
@@ -114,7 +103,7 @@ export const deleteComment = async (parentCommentId, token) => {
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
@@ -122,11 +111,12 @@ export const deleteComment = async (parentCommentId, token) => {
 
 /**
  * Creates a new reply for a comment
- *
- * @param {string} parentCommentId - ID of the parent comment.
- * @param {Object} newReply - New reply object.
+ * @async
+ * @param {Object} data - Object that contains parentCommentId and newReply
+ * @param {string} data.parentCommentId - ID of the parent comment.
+ * @param {NewComment} data.newReply - New reply object.
  * @param {string} token - Authentication token.
- * @returns {Promise<Object|Error>} Returns the new reply data or error response data.
+ * @returns {Promise<Comment|Error>} Returns the new reply data or error response data.
  */
 export const createReply = async (parentCommentId, newReply, token) => {
 	try {
@@ -138,7 +128,7 @@ export const createReply = async (parentCommentId, newReply, token) => {
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
@@ -146,19 +136,16 @@ export const createReply = async (parentCommentId, newReply, token) => {
 
 /**
  * Updates a reply for a comment
- *
- * @param {string} parentCommentId - ID of the parent comment.
- * @param {string} replyId - ID of the reply to be updated.
- * @param {Object} updatedReply - Object containing the updated data for the reply.
+ * @async
+ * @param {Object} data - Object that contains parentCommentId, replyId and updatedReply
+ * @param {string} data.parentCommentId - ID of the parent comment.
+ * @param {string} data.replyId - ID of the reply to be updated.
+ * @param {CommentToUpdate} data.updatedReply - Object containing the updated data for the reply.
  * @param {string} token - Authentication token.
  * @returns {Promise<Object|Error>} Returns the updated reply data or error response data.
  */
-export const updateReply = async (
-	parentCommentId,
-	replyId,
-	updatedReply,
-	token,
-) => {
+export const updateReply = async (data, token) => {
+	const { parentCommentId, replyId, updatedReply } = data;
 	try {
 		const response = await api.put(
 			`${baseUrl}/${parentCommentId}/replies/${replyId}`,
@@ -168,7 +155,7 @@ export const updateReply = async (
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
@@ -176,13 +163,15 @@ export const updateReply = async (
 
 /**
  * Deletes a reply for a comment
- *
- * @param {string} parentCommentId - ID of the parent comment.
- * @param {string} replyId - ID of the reply to be deleted.
+ * @async
+ * @param {Object} data - Object that contains parentCommentId and replyId
+ * @param {string} data.parentCommentId - Parent comment ID
+ * @param {string} data.replyId - Reply ID
  * @param {string} token - Authentication token.
  * @returns {Promise<Object|Error>} Returns the delete response data or error response data.
  */
-export const deleteReply = async (parentCommentId, replyId, token) => {
+export const deleteReply = async (data, token) => {
+	const { parentCommentId, replyId } = data;
 	try {
 		const response = await api.delete(
 			`${baseUrl}/${parentCommentId}/replies/${replyId}`,
@@ -191,7 +180,7 @@ export const deleteReply = async (parentCommentId, replyId, token) => {
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}

@@ -4,7 +4,8 @@ const baseUrl = '/author/';
 
 /**
  * It fetches the author object
- * @returns {Promise<Object|void>} The fetched author or void if error occurs
+ * @async
+ * @returns {Promise<AuthorInfo|void>} Author info or void if error occurred
  * @throws {Error} Throws and error if the fetch operation somehow fails.
  */
 export const fetchAuthor = async () => {
@@ -20,8 +21,8 @@ export const fetchAuthor = async () => {
 
 /**
  * It returns the author image url
- * @param {String} imageId The imageId of the author image
- * @returns {String} The image url
+ * @param {string} imageId The imageId of the author image
+ * @returns {string} The image url
  */
 export const getAuthorImageUrl = (imageId) => {
 	return `${process.env.VUE_APP_API_URL}/api/author/${imageId}/image`;

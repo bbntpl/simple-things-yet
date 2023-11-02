@@ -5,8 +5,9 @@ const baseUrl = '/categories';
 
 /**
  * Fetches array of categories
- * @param {Object} queries - The queries that contributes to arrange the set of categories will be fetched
- * @returns  {Promise<Object[]>} The collection of categories (promised)
+ * @async
+ * @param {DataFetchQueries} queries - Queries which arranges the categories-to-fetch
+ * @returns  {Promise<CategoryWithPublishedBlogs[]>} Promised categories with published blogs
  * @throws {Error} Throws an error if the fetch operation falis
  */
 export const fetchCategoriesWithPublishedBlogs = async (queries) => {
@@ -25,8 +26,8 @@ export const fetchCategoriesWithPublishedBlogs = async (queries) => {
 
 /**
  * Fetches array of categories with published blogs
- * @param {Object} queries - The queries that contributes to arrange the set of categories that'll be fetched
- * @returns  {Promise<Object[]>} Collection of categories (promised)
+ * @param {DataFetchQueries} queries - Queries which arranges the categories-to-fetch
+ * @returns  {Promise<CategoryWithLatestBlogs[]>} Promised categories with latest blogs
  * @throws {Error} Throws an error if the fetch operation falis
  */
 export const fetchCategoriesWithLatestBlogs = async (queries) => {
@@ -44,9 +45,9 @@ export const fetchCategoriesWithLatestBlogs = async (queries) => {
 };
 
 /**
- * Fetches a particular category
- * @param {String} categoryId category ID
- * @returns {Promise<Object>} Promised category object
+ * Fetches a specific category
+ * @param {string} categoryId Category ID
+ * @returns {Promise<Category>} Promised category object
  * @throws {Error} Throws an error if the fetch operation fails
  */
 export const fetchCategory = async (categoryId) => {
@@ -59,8 +60,8 @@ export const fetchCategory = async (categoryId) => {
 };
 
 /**
- * It returns the cateogry image url
- * @param {String} imageId The imageId of the cateogry image
+ * It returns the category image url
+ * @param {String} imageId The image ID of the category
  * @returns {String} The image url
  */
 export const getCategoryImageUrl = (imageId) => {

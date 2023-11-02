@@ -4,9 +4,11 @@ import api, { requestOptions } from './';
 const baseUrl = '/blogs';
 
 /**
- * Fetches published blogs.
- * @returns {Promise<Object[]>} Array promises of published blog objects.
- * @throws {Error} Throws an error if the fetch operation fails.
+ * Fetches published blogs
+ * @async
+ * @param {DataFetchQueries} queries - The queries which arranges the exact data-to-fetch
+ * @returns {Promise<PublishedBlog[]>} Promised array of published blogs
+ * @throws {Error} Throws an error if the fetch operation fails
  */
 export const fetchPublishedBlogs = async (queries) => {
 	const queryString = convertToQueryUrl(queries);
@@ -20,8 +22,10 @@ export const fetchPublishedBlogs = async (queries) => {
 
 /**
  * Fetches published blog by slug.
- * @returns {Promise<Object>} Promise of a published blog.
- * @throws {Error} Throws an error if the fetch operation fails.
+ * @async
+ * @param {string} slug - The slug format of blog's title
+ * @returns {Promise<PublishedBlog>} Promise of a published blog
+ * @throws {Error} Throws an error if the fetch operation fails
  */
 export const fetchPublishedBlogBySlug = async (slug) => {
 	const queryString = convertToQueryUrl({ slug });
@@ -35,11 +39,13 @@ export const fetchPublishedBlogBySlug = async (slug) => {
 
 /**
  * Fetches published blog by ID.
- * @returns {Promise<Object>} Promise of a published blog.
- * @throws {Error} Throws an error if the fetch operation fails.
+ * @async
+ * @param {string} blogId - Published blog ID
+ * @returns {Promise<PublishedBlog>} Promise of a published blog
+ * @throws {Error} Throws an error if the fetch operation fails
  */
-export const fetchPublishedBlogById = async (id) => {
-	const queryString = convertToQueryUrl({ id });
+export const fetchPublishedBlogById = async (blogId) => {
+	const queryString = convertToQueryUrl({ id: blogId });
 	try {
 		const response = await api.get(`${baseUrl}/published/doc?${queryString}`);
 		return response.data;
@@ -49,9 +55,10 @@ export const fetchPublishedBlogById = async (id) => {
 };
 
 /**
- * Fetches total amount of published blogs with unset category.
- * @returns {Promise<Object>} Object that contains the amount of blogs.
- * @throws {Error} Throws an error if the fetch operation fails.
+ * Fetches total amount of published blogs with unset category
+ * @async
+ * @returns {Promise<number>} Amount of published blogs without category
+ * @throws {Error} Throws an error if the fetch operation fails
  */
 export const fetchTotalPublishedBlogsWithUnsetCategory = async () => {
 	try {
@@ -66,8 +73,9 @@ export const fetchTotalPublishedBlogsWithUnsetCategory = async () => {
 
 /**
  * Fetches total amount of published blogs.
- * @returns {Promise<Object>} Object that contains the amount of published blogs.
- * @throws {Error} Throws an error if the fetch operation fails.
+ * @async
+ * @returns {Promise<number>} Total number of published blogs
+ * @throws {Error} Throws an error if the fetch operation fails
  */
 export const fetchTotalPublishedBlogs = async () => {
 	try {
@@ -79,28 +87,26 @@ export const fetchTotalPublishedBlogs = async () => {
 };
 
 /**
- * Updates a blog with user interaction.
- * @param {Object} updatedBlog - The blog data that'll be updated.
- * @param {Object} user - The user object
- * @param {string} user.id - The user's ID.
- * @param {string} token - The authentication token.
- * @returns {Promise<Object|Error>} The updated blog object or error if an error occurs.
+ * Updates a blog with user interaction
+ * @async
+ * @param {Object} data - Object that contains blogId and userId
+ * @param {Object} data.blogId - Blog ID
+ * @param {string} data.userId - User ID
+ * @param {string} token - Authentication token
+ * @returns {Promise<PublishedBlog|Error>} The updated blog object or error if an error occurs.
  */
-export const updateBlogWithUserInteraction = async (
-	updatedBlog,
-	user,
-	token,
-) => {
+export const likeBlogPost = async (data, token) => {
+	const { blogId, userId } = data;
 	try {
 		const response = await api.put(
-			`${baseUrl}/${user.id}`,
-			updatedBlog,
+			`${baseUrl}/${blogId}/likes/${userId}`,
+			{},
 			requestOptions(token),
 		);
 		return response.data;
 	} catch (error) {
 		if (error.response) {
-			// Return error data for UI display, leveraging axios interceptors.
+			// Return error data for UI display
 			return error.response.data;
 		}
 	}
