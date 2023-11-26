@@ -1,43 +1,72 @@
 <template>
-	<div v-if="blogArticle" class="blog-article">
-		<p>{{ blogArticle.title }}</p>
+	<div
+		v-if="blogArticle.data && !blogArticle.doesNotExists"
+		class="blog-article"
+	>
+		<p>{{ blogArticle.data.title }}</p>
 		<p>
-			{{ blogArticle.slug }}
+			{{ blogArticle.data.slug }}
 		</p>
 	</div>
-	<div v-else-if="!isLoading()">This blog does not exists yet.</div>
+	<div v-else-if="blogArticle.doesNotExists">
+		This blog does not exists yet.
+	</div>
 </template>
 
 <script>
-import { onMounted, computed } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { useBlogsStore } from '@/stores/blogs';
-import { execInit, isLoading } from '@/utils/helpers';
+import { execInit } from '@/utils/helpers';
 
 export default {
 	name: 'BlogPage',
-	props: {
-		blog: {
-			type: Object,
-			default: undefined,
-		},
-	},
+	// eslint-disable-next-line max-lines-per-function
 	setup() {
 		const blogsStore = useBlogsStore();
 		const route = useRoute();
 
-		const slug = route.params.slug;
-		const blogArticle = computed(() => blogsStore.getBlogBySlug(slug));
-
-		onMounted(async () => {
-			if (blogArticle.value) return;
-			await execInit(blogsStore.addBlogBySlug(route.params.slug), {
-				errorMsg: 'Something went wrong when fetching a blog',
-			});
+		const blogSlug = route.params.slug;
+		const blog = reactive({
+			data: null,
+			doesNotExists: false,
+			category: null,
+			categoryImage: null,
+			blogImage: null,
+			tags: [],
 		});
 
-		return { blogArticle, isLoading: computed(() => isLoading()) };
+		const fetchBlogBySlugAndSet = async () => {
+			return await blogsStore.addBlogBySlug(blogSlug);
+		};
+
+		const fetchDocsByRefsAndGetPromises = async () => {
+			const promises = [];
+			const fetchedBlog = blogsStore.getBlogBySlug(blogSlug);
+			if (!fetchedBlog) {
+				blog.doesNotExists = true;
+				return promises;
+			}
+
+			blog.data = fetchedBlog;
+
+			return promises;
+		};
+
+		onMounted(async () => {
+			// check if blog exists already on the store, if not, fetch it and set, otherwise, there's no need
+			if (!blogsStore.getBlogBySlug(blogSlug)) {
+				await execInit(fetchBlogBySlugAndSet);
+			}
+
+			const promises = fetchDocsByRefsAndGetPromises();
+			if (promises.length === 0) return;
+			const resolvePromises = async () => await promises;
+			await execInit(resolvePromises);
+		});
+
+		return { blogArticle: blog };
 	},
 };
 </script>

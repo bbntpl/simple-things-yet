@@ -1,11 +1,11 @@
 import { defineStore, storeToRefs } from 'pinia';
-import { computed, ref, toRaw } from 'vue';
-
+import { computed, ref, unref } from 'vue';
 import { useBlogsStore } from './blogs';
-
 import {
 	fetchCategoriesWithLatestBlogs,
 	fetchCategoriesWithPublishedBlogs,
+	fetchCategoryById,
+	fetchCategoryBySlug,
 } from '@/api/categoryService';
 import { extractIds } from '@/utils/helpers';
 
@@ -24,18 +24,39 @@ export const useCategoriesStore = defineStore('categories', () => {
 		}
 	}
 
+	async function addCategoryById(categoryId) {
+		changeStatusTo('loading');
+		try {
+			const fetchedCategory = await fetchCategoryById(categoryId);
+			categories.value.push(fetchedCategory);
+			changeStatusTo('succeeded');
+		} catch (err) {
+			changeStatusTo('failed');
+			throw err;
+		}
+	}
+
+	async function addCategoryBySlug(categorySlug) {
+		changeStatusTo('loading');
+		try {
+			const fetchedCategory = await fetchCategoryBySlug(categorySlug);
+			categories.value.push(fetchedCategory);
+			changeStatusTo('succeeded');
+		} catch (err) {
+			changeStatusTo('failed');
+			throw err;
+		}
+	}
+
 	async function addCategories(queries) {
 		changeStatusTo('loading');
 		try {
-			const fetchedCategories = await fetchCategoriesWithPublishedBlogs(
-				queries,
-			);
+			const fetchedCategories = await fetchCategoriesWithPublishedBlogs({
+				...queries,
+				excludeIds: extractIds(unref(categories.value)),
+			});
 			categories.value.push(...fetchedCategories);
-			if (queries?.limit === null) {
-				changeStatusTo('fully-fetched');
-			} else {
-				changeStatusTo('succeeded');
-			}
+			changeStatusTo('fully-fetched');
 		} catch (err) {
 			changeStatusTo('failed');
 			console.error('Failed to fetch set of categories', err);
@@ -48,9 +69,7 @@ export const useCategoriesStore = defineStore('categories', () => {
 		try {
 			const fetchedCategories = await fetchCategoriesWithLatestBlogs({
 				...queries,
-				excludeIds: extractIds(
-					[...categories.value, ...blogs.value].map(toRaw),
-				),
+				excludeIds: extractIds(unref([...categories.value, ...blogs.value])),
 			});
 
 			const extractedBlogs = [];
@@ -72,36 +91,37 @@ export const useCategoriesStore = defineStore('categories', () => {
 		}
 	}
 
-	function sortCategories(sortBy = 'asc', sortByTotalBlogs = false) {
-		const sortedCategories = categories.value.map(toRaw);
+	const sortedCategories = computed(() => {
+		return (sortBy = 'asc', sortByTotalBlogs = false) => {
+			const referencedCategories = [...unref(categories.value)];
+			referencedCategories.sort((a, b) => {
+				if (sortBy === 'asc') {
+					return a.name.localeCompare(b.name);
+				} else if (sortBy === 'desc') {
+					return b.name.localeCompare(a.name);
+				}
+			});
 
-		sortedCategories.sort((a, b) => {
-			if (sortBy === 'asc') {
-				return a.name.localeCompare(b);
-			} else if (sortBy === 'desc') {
-				return b.name.localeCompare(a);
+			if (sortByTotalBlogs) {
+				referencedCategories.sort(
+					(a, b) => a.publishedBlogs.length - b.publishedBlogs.length,
+				);
 			}
-		});
 
-		if (sortByTotalBlogs) {
-			sortedCategories.sort(
-				(a, b) => a.publishedBlogs.length - b.publishedBlogs.length,
-			);
-		}
-
-		return sortedCategories;
-	}
-
-	const categoriesByNameAsc = computed(() => sortCategories());
-	const categoriesByNameDesc = computed(() => sortCategories('desc'));
-	const categoriesByTotalBlogs = computed(() => sortCategories('asc', true));
+			return referencedCategories;
+		};
+	});
 
 	const getCategoryById = computed(() => {
 		return (id) => categories.value.find((category) => category.id === id);
 	});
-
+	const getCategoryBySlug = computed(() => {
+		return (slug) =>
+			categories.value.find((category) => category.slug === slug);
+	});
 	const categoriesWithEmbeddedBlogs = computed(() => {
-		return categoriesByTotalBlogs.value
+		const categoriesByTotalBlogs = sortedCategories.value('asc', true);
+		return categoriesByTotalBlogs
 			.filter((category) => category.publishedBlogs.length >= 2)
 			.map((category) => {
 				const blogIds = category.publishedBlogs;
@@ -120,17 +140,20 @@ export const useCategoriesStore = defineStore('categories', () => {
 			});
 	});
 
-	const isReadyToFetch = computed(() => status.value === 'idle');
+	const isReadyToFetch = computed(
+		() => status.value !== 'fully-fetched' && status.value !== 'loading',
+	);
 
 	return {
 		categories,
+		addCategoryById,
+		addCategoryBySlug,
 		addCategories,
 		addCategoriesWithLatestBlogs,
 		isReadyToFetch,
-		categoriesByNameAsc,
-		categoriesByNameDesc,
-		categoriesByTotalBlogs,
+		sortedCategories,
 		getCategoryById,
+		getCategoryBySlug,
 		categoriesWithEmbeddedBlogs,
 	};
 });

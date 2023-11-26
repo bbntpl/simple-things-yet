@@ -1,7 +1,7 @@
 <template>
-	<a :href="`category/${categorySlug}`" class="category-link">
-		<div class="category-tile">
-			<div class="category-content-wrapper">
+	<div class="category-tile">
+		<div class="category-content-wrapper">
+			<a :href="`${urlRoot}/#/category/${slug}`" class="category-link">
 				<div
 					class="category-background primary-bg"
 					:style="{ backgroundImage: categoryImageString }"
@@ -20,13 +20,13 @@
 						</span>
 					</div>
 				</div>
-			</div>
+			</a>
 		</div>
-	</a>
+	</div>
 </template>
 
 <script>
-import { getAuthorImageUrl } from '@/api/authorService';
+import { getImageUrl } from '@/api';
 import { computed } from 'vue';
 import { ElIcon } from 'element-plus';
 
@@ -60,7 +60,7 @@ export default {
 	},
 	setup(props) {
 		const categoryImageSrc = props.categoryImageId
-			? getAuthorImageUrl(props.categoryImageId)
+			? getImageUrl(props.categoryImageId)
 			: props.imageSrc;
 		const categoryImageString = computed(
 			() => `
@@ -73,6 +73,8 @@ export default {
 		return {
 			categoryImageSrc,
 			categoryImageString,
+			slug: props.categorySlug,
+			urlRoot: computed(() => process.env.VUE_APP_BASE_URL),
 		};
 	},
 };
@@ -84,7 +86,8 @@ export default {
 }
 
 .category-tile {
-	display: block;
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 }
 
@@ -93,6 +96,7 @@ export default {
 	width: 100%;
 	min-height: 200px;
 	height: max-content;
+	flex-grow: 1;
 }
 
 .category-background {
@@ -116,12 +120,14 @@ export default {
 	align-items: flex-start;
 	padding: 2rem;
 	text-transform: none;
+	height: 100%;
 }
 
 .category-information p {
 	text-align: left;
 	margin: 1rem 0;
 	line-height: 1.5rem;
+	flex-grow: 1;
 }
 
 .category-title {
@@ -132,6 +138,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	height: 100%;
 }
 
 .category-details__total-blogs {
@@ -139,5 +146,11 @@ export default {
 	gap: 5px;
 	justify-content: flex-start;
 	font-weight: 600;
+}
+
+@media (min-width: 768px) {
+	.category-tile {
+		flex: 0 0 calc(50% - 10px);
+	}
 }
 </style>

@@ -18,12 +18,3 @@ export const fetchAuthor = async () => {
 		);
 	}
 };
-
-/**
- * It returns the author image url
- * @param {string} imageId The imageId of the author image
- * @returns {string} The image url
- */
-export const getAuthorImageUrl = (imageId) => {
-	return `${process.env.VUE_APP_API_URL}/api/author/${imageId}/image`;
-};

@@ -1,22 +1,36 @@
 <template>
 	<TagsCollection :tags="tags" :collapseText="`Blog Tags (${tags?.length})`" />
-	<BlogsCollection :blogs="blogs" />
+	<h1
+		:style="{
+			margin: '36px 0 0 0',
+			fontWeight: 'bold',
+			fontSize: '2rem',
+		}"
+	>
+		Recent Blogs
+	</h1>
+	<BlogsCollection
+		v-if="typeof totalPublishedBlogs === 'number'"
+		:blogs="blogs"
+		:totalPublishedBlogs="totalPublishedBlogs"
+	/>
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useTagsStore } from '@/stores/tags';
 import { useBlogsStore } from '@/stores/blogs';
 import TagsCollection from '@/components/tag/TagsCollection';
+import BlogsCollection from '@/components/blog/BlogsCollection';
 import { execInit } from '@/utils/helpers';
 
 export default {
 	name: 'BlogListView',
 	components: {
 		TagsCollection,
-		// BlogsCollectionWithPagination,
+		BlogsCollection,
 	},
 	// eslint-disable-next-line max-lines-per-function
 	setup() {
@@ -24,8 +38,8 @@ export default {
 		const blogsStore = useBlogsStore();
 
 		const { tags } = storeToRefs(tagsStore);
-		const { totalPublishedBlogs, paginatedBlogs } = storeToRefs(blogsStore);
-		const blogs = ref(paginatedBlogs.value(0, 8) || []);
+		const { blogs } = storeToRefs(blogsStore);
+		const { totalPublishedBlogs } = storeToRefs(blogsStore);
 
 		const getPromises = async () => {
 			const promises = [];
@@ -34,32 +48,34 @@ export default {
 				promises.push(tagsStore.addAllTags());
 			}
 
-			if (blogsStore.totalPublishedBlogs) {
-				promises.push(blogsStore.initializeTotalPublishedBlogs);
+			if (!blogsStore.totalPublishedBlogs) {
+				promises.push(blogsStore.initializeTotalPublishedBlogs());
 			}
 
-			promises.push(
-				blogsStore.addFetchedBlogs({
-					skip: 0,
-					limit: 8,
-				}),
-			);
+			if (blogs.value.length === 0) {
+				promises.push(
+					blogsStore.addFetchedBlogs({
+						limit: 1,
+						sort: 'latest',
+					}),
+				);
+			}
+
+			return Promise.all(promises);
 		};
 
 		onMounted(async () => {
 			const promises = getPromises();
+			if (promises.length === 0) return;
 
-			const resolvePromises = await Promise.all(promises);
-			const result = await execInit(resolvePromises, {
-				errorMsg: 'Something went wrong when fetching the blogs',
-			});
-			console.log(result);
+			const resolvePromises = async () => await promises;
+			await execInit(resolvePromises);
 		});
 
 		return {
 			tags: computed(() => tags.value),
 			blogs: computed(() => blogs.value),
-			totalPublishedBlogs: computed(() => totalPublishedBlogs),
+			totalPublishedBlogs: computed(() => totalPublishedBlogs.value),
 		};
 	},
 };

@@ -2,7 +2,7 @@
 	<div class="author-info">
 		<div class="author-pic-wrapper">
 			<div class="primary-bg author-pic-outer-wrapper">
-				<div class="author-pic-inner-wrapper">
+				<div class="author-pic-inner-wrapper liquid-wrapper">
 					<img :src="authorPictureSrc" alt="author-picture" />
 				</div>
 			</div>

@@ -3,18 +3,12 @@ import { computed, ref } from 'vue';
 
 import { fetchAuthor } from '@/api/authorService';
 
-// eslint-disable-next-line max-lines-per-function
 export const useAuthorStore = defineStore('author', () => {
 	const author = ref(null);
-
 	const status = ref('idle');
 
-	function startLoading() {
-		status.value = 'loading';
-	}
-
 	async function initializeAuthor() {
-		startLoading();
+		status.value = 'loading';
 		try {
 			const fetchedAuthor = await fetchAuthor();
 			author.value = fetchedAuthor;

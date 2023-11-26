@@ -27,6 +27,16 @@ const routes = [
 		component: () => import('../views/BlogPage'),
 	},
 	{
+		path: '/tag/:slug',
+		name: 'tag-view',
+		component: () => import('../views/TagView'),
+	},
+	{
+		path: '/category/:slug',
+		name: 'category-with-blogs-view',
+		component: () => import('../views/CategoryView'),
+	},
+	{
 		path: '/',
 		name: 'home-page',
 		component: () => import('../views/HomePage'),

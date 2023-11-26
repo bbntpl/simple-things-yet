@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, ref, toRaw } from 'vue';
+import { computed, ref, toRaw, unref } from 'vue';
 
 import {
 	fetchPublishedBlogBySlug,
@@ -20,10 +20,10 @@ export const useBlogsStore = defineStore('blogs', () => {
 		return newBlogs.filter((blog) => !existingIds.some((id) => id === blog.id));
 	}
 
-	async function initializeTotalPublishedBlogs() {
+	async function initializeTotalPublishedBlogs(queries = {}) {
 		status.value = 'loading';
 		try {
-			const blogsSize = await fetchTotalPublishedBlogs();
+			const blogsSize = await fetchTotalPublishedBlogs(queries);
 			totalPublishedBlogs.value = blogsSize;
 			status.value = 'succeeded';
 		} catch (err) {
@@ -51,10 +51,10 @@ export const useBlogsStore = defineStore('blogs', () => {
 			// Fetch blogs by api request and update the state
 			const fetchedBlogs = await fetchPublishedBlogs({
 				...queries,
-				excludeIds: extractIds(blogs.value.map(toRaw)),
-				category: 1,
+				excludeIds: extractIds(unref(blogs.value)),
 			});
 			blogs.value.push(...fetchedBlogs);
+			status.value = 'succeeded';
 		} catch (err) {
 			status.value = 'failed';
 			console.error('Failed to fetch published blogs', err.message);
@@ -71,17 +71,17 @@ export const useBlogsStore = defineStore('blogs', () => {
 	}
 
 	const paginatedBlogs = computed(() => {
-		return (skip, limit) => {
+		return (page, limit) => {
 			const sortedBlogsByNewest = blogs.value.sort(
 				(a, b) => new Date(b.publishedAt) - new Date(a.publishedAt),
 			);
-
+			const skip = Number(page) - 1;
 			return sortedBlogsByNewest.slice(skip, skip + limit);
 		};
 	});
 
 	const getLatestBlogs = computed(() => {
-		return (length) => paginatedBlogs.value(0, length);
+		return (length) => paginatedBlogs.value(1, length);
 	});
 
 	const getBlogById = computed(() => {
@@ -90,6 +90,20 @@ export const useBlogsStore = defineStore('blogs', () => {
 
 	const getBlogBySlug = computed(() => {
 		return (slug) => blogs.value.find((blog) => blog.slug === slug);
+	});
+
+	const getBlogsByTag = computed(() => {
+		return (tagId) => blogs.value.filter((blog) => blog.tags.includes(tagId));
+	});
+
+	const getBlogsByCategory = computed(() => {
+		return (categoryId) =>
+			blogs.value.filter((blog) => blog.category === categoryId);
+	});
+
+	const getBlogByCategory = computed(() => {
+		return (categoryId) =>
+			blogs.value.find((blog) => blog.category === categoryId);
 	});
 
 	const isReadyToFetch = computed(() => {
@@ -106,6 +120,9 @@ export const useBlogsStore = defineStore('blogs', () => {
 		getLatestBlogs,
 		getBlogById,
 		getBlogBySlug,
+		getBlogsByTag,
+		getBlogsByCategory,
+		getBlogByCategory,
 		filterNewBlogs,
 		totalPublishedBlogs,
 		initializeTotalPublishedBlogs,

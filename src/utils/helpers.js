@@ -47,13 +47,13 @@ export const isLoading = (options) => {
 export const convertToQueryUrl = (queries) => {
 	const params = new URLSearchParams({
 		...queries,
-		...(!queries.skip ? {} : { skip: queries.skip }),
+		...(!queries.page ? { page: 1 } : { page: queries.page }),
 		...(!queries.limit ? {} : { limit: queries.limit }),
 		sort: queries.sort || 'asc',
 		excludeIds: queries.excludeIds || [],
 	});
 
-	for (const [key, value] of Object.entries(queries)) {
+	for (const [key, value] of Object.entries(params)) {
 		if (Array.isArray(value)) {
 			params.delete(key);
 			value.forEach((v) => params.append(key, v));
@@ -69,9 +69,8 @@ export const convertToQueryUrl = (queries) => {
  * @returns {Array<string>} Array of IDs.
  */
 export const extractIds = (docs) => {
-	console.log(docs);
 	if (docs.length === 0) return [];
-	return docs.map((doc) => doc.id);
+	return [...docs.map((doc) => doc.id)];
 };
 
 /**

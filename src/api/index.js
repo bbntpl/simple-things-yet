@@ -37,4 +37,13 @@ export const isTokenExpiredError = (error) => {
 	return errorName === 'tokenexpirederror' && errorStatus === 401;
 };
 
+/**
+ * It returns the image url
+ * @param {string} imageId Image ID
+ * @returns {string} The image url
+ */
+export function getImageUrl(imageId) {
+	return `${process.env.VUE_APP_API_URL}/api/images/${imageId}/source`;
+}
+
 export default api;

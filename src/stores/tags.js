@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, unref } from 'vue';
 
 import { extractIds } from '@/utils/helpers';
-import { fetchTagById, fetchTags } from '@/api/tagService';
+import { fetchTagById, fetchTagBySlug, fetchTags } from '@/api/tagService';
 
 // eslint-disable-next-line max-lines-per-function
 export const useTagsStore = defineStore('tags', () => {
@@ -20,7 +20,7 @@ export const useTagsStore = defineStore('tags', () => {
 		try {
 			const fetchedTags = await fetchTags({
 				sort: 'asc',
-				excludeIds: extractIds(rawTags),
+				excludeIds: extractIds(unref(tags.value)),
 			});
 			tags.value.push(...fetchedTags);
 			changeStatusTo('fully-fetched');
@@ -43,22 +43,37 @@ export const useTagsStore = defineStore('tags', () => {
 		}
 	}
 
+	async function addTagBySlug(tagSlug) {
+		changeStatusTo('loading');
+		try {
+			const fetchedTag = await fetchTagBySlug(tagSlug);
+			tags.value.push(fetchedTag);
+			changeStatusTo('succeeded');
+		} catch (err) {
+			changeStatusTo('failed');
+			throw err;
+		}
+	}
+
 	const getTagById = computed(() => {
 		return (id) => tags.value.find((tag) => tag.id === id);
+	});
+
+	const getTagBySlug = computed(() => {
+		return (slug) => tags.value.find((tag) => tag.slug === slug);
 	});
 
 	const isReadyToFetch = computed(
 		() => status.value === 'idle' || status.value === 'succeeded',
 	);
 
-	const rawTags = computed(() => tags.value);
-
 	return {
 		tags,
 		addAllTags,
 		addTagById,
+		addTagBySlug,
 		getTagById,
+		getTagBySlug,
 		isReadyToFetch,
-		rawTags,
 	};
 });

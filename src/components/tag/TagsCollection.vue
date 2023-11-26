@@ -7,7 +7,7 @@
 				:href="`${urlRoot}/#/tag/${tag.slug}`"
 			>
 				<el-tag type="success">
-					{{ `${tag.name} ${tag.blogs.length}` }}
+					{{ `${tag.name} ${tag.publishedBlogs.length}` }}
 				</el-tag>
 			</a>
 		</el-collapse-item>
@@ -35,8 +35,7 @@ export default {
 			default: '',
 		},
 	},
-	setup(props) {
-		console.log(props.tags);
+	setup() {
 		return {
 			urlRoot: computed(() => process.env.VUE_APP_BASE_URL),
 		};

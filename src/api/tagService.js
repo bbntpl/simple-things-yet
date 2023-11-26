@@ -12,7 +12,9 @@ const baseUrl = '/tags';
 export const fetchTags = async (queries) => {
 	const queryString = convertToQueryUrl(queries);
 	try {
-		const response = await api.get(`${baseUrl}?${queryString}`);
+		const response = await api.get(
+			`${baseUrl}/with-published-blogs?${queryString}`,
+		);
 		return response.data;
 	} catch (error) {
 		throw new Error('Something went wrong when fetching tags');
@@ -27,10 +29,26 @@ export const fetchTags = async (queries) => {
  */
 export const fetchTagById = async (tagId) => {
 	try {
-		const response = await api.get(`${baseUrl}/${tagId}`);
+		const response = await api.get(`${baseUrl}/${tagId}/with-published-blogs`);
 		return response.data;
 	} catch (error) {
-		console.log(error);
-		throw new Error('Something went wrong when fetching a tag');
+		throw new Error('Something went wrong when fetching a tag by id');
+	}
+};
+
+/**
+ * Fetches a tag by slug
+ * @param {string} tagSlug - Tag slug
+ * @returns {Promise<Tag>} Promised tag object
+ * @throws {Error} Otherwise, throws an error
+ */
+export const fetchTagBySlug = async (tagSlug) => {
+	try {
+		const response = await api.get(
+			`${baseUrl}/${tagSlug}/slug/with-published-blogs?sort=asc`,
+		);
+		return response.data;
+	} catch (error) {
+		throw new Error('Something went wrong when fetching a tag by slug');
 	}
 };

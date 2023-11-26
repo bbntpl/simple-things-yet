@@ -53,7 +53,7 @@ import './styles.css';
 
 import { formatDateInTimeZone } from '@/utils/date.js';
 import { extractTextFromStringifiedHTML } from '@/utils/helpers.js';
-import { getBlogImageUrl } from '@/api/blogService';
+import { getImageUrl } from '@/api';
 
 export default {
 	name: 'BlogCard',
@@ -99,7 +99,7 @@ export default {
 
 		onMounted(() => {
 			if (blogImageSrc.value === null) {
-				blogImageSrc.value = getBlogImageUrl(props.blog.imageId);
+				blogImageSrc.value = getImageUrl(props.blog.imageFile);
 			}
 			if (props.blog?.content && props.variantType !== 'TitleOnly') {
 				blogPreviewDesc.value = `${extractTextFromStringifiedHTML(

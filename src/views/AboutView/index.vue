@@ -16,7 +16,7 @@ import { watch, onMounted, reactive, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import { useAuthorStore } from '@/stores/author';
-import { getAuthorImageUrl } from '@/api/authorService';
+import { getImageUrl } from '@/api';
 import AuthorAboutInfo from '@/components/author/AuthorAboutInfo.vue';
 import AuthorContactForm from '@/components/author/AuthorContactForm.vue';
 import MainWrapper from '@/components/layouts/MainWrapper.vue';
@@ -36,8 +36,8 @@ export default {
 		const { author } = storeToRefs(authorStore);
 		const authorData = reactive({
 			bioHtml: author.value?.bio || null,
-			imageSrc: author.value?.imageId
-				? getAuthorImageUrl(author.value.imageId)
+			imageSrc: author.value?.imageFile
+				? getImageUrl(author.value.imageFile)
 				: null,
 			email: author.value?.email || null,
 		});
@@ -45,8 +45,8 @@ export default {
 		watch(author, (updatedAuthor) => {
 			authorData.bioHtml = updatedAuthor.bio || null;
 			authorData.email = updatedAuthor.email || null;
-			authorData.imageSrc = updatedAuthor.imageId
-				? getAuthorImageUrl(updatedAuthor.imageId)
+			authorData.imageSrc = updatedAuthor.imageFile
+				? getImageUrl(updatedAuthor.imageFile)
 				: null;
 		});
 

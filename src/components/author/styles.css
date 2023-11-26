@@ -59,20 +59,20 @@
 }
 
 .author-pic-outer-wrapper {
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
+  width: 360px;
+  height: 360px;
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
+  border-radius: 71% 29% 71% 29% / 29% 68% 34% 69%;
 }
 
 .author-pic-inner-wrapper {
-  width: 400px;
-  height: 400px;
+  width: 340px;
+  height: 340px;
   border-radius: 50%;
   overflow: hidden;
-  box-shadow: -2px 2px 1px 1px rgba(141, 136, 2, 0.8);
+  border-radius: 72% 28% 70% 30% / 30% 67% 33% 70%
 }
 
 .author-pic-inner-wrapper img {

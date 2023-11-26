@@ -19,7 +19,7 @@ export const fetchCategoriesWithPublishedBlogs = async (queries) => {
 		return response.data;
 	} catch (error) {
 		throw new Error(
-			'Something went wrong when fetching categories with published blogs',
+			`${error.message}: Something went wrong when fetching categories with published blogs`,
 		);
 	}
 };
@@ -50,7 +50,7 @@ export const fetchCategoriesWithLatestBlogs = async (queries) => {
  * @returns {Promise<Category>} Promised category object
  * @throws {Error} Throws an error if the fetch operation fails
  */
-export const fetchCategory = async (categoryId) => {
+export const fetchCategoryById = async (categoryId) => {
 	try {
 		const response = await api.get(`${baseUrl}/${categoryId}`);
 		return response.data;
@@ -60,10 +60,18 @@ export const fetchCategory = async (categoryId) => {
 };
 
 /**
- * It returns the category image url
- * @param {String} imageId The image ID of the category
- * @returns {String} The image url
+ * Fetches a specific category
+ * @param {string} categorySlug Category name slug
+ * @returns {Promise<Category>} Promised category object
+ * @throws {Error} Throws an error if the fetch operation fails
  */
-export const getCategoryImageUrl = (imageId) => {
-	return `${process.env.VUE_APP_API_URL}/api/category/${imageId}/image`;
+export const fetchCategoryBySlug = async (categorySlug) => {
+	try {
+		const response = await api.get(
+			`${baseUrl}/${categorySlug}/slug/with-published-blogs?sort=asc`,
+		);
+		return response.data;
+	} catch (error) {
+		throw new Error('Something went wrong when fetching a category by slug');
+	}
 };

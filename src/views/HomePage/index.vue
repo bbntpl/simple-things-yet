@@ -17,7 +17,7 @@
 				v-for="(blog, index) in latestBlogs"
 				:key="`latest_${blog.id}`"
 				:variantType="index === 0 ? 'Full' : 'TitleDescDate'"
-				:size="index === 0 ? 'large' : 'medium'"
+				:size="index === 0 || latestBlogs.length === 2 ? 'large' : 'medium'"
 				:blog="blog"
 				:blogStyles="{
 					...homepageSectionsStyles[1].blogStyles,
@@ -54,6 +54,7 @@
 <script>
 import { onMounted, ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+
 import './styles.css';
 import MainWrapper from '@/components/layouts/MainWrapper.vue';
 import BlogCard from '@/components/blog/BlogCard';
@@ -92,8 +93,8 @@ export default {
 		});
 
 		watch(categoriesWithEmbeddedBlogs, (updatedCategoriesWithEmbeddedBlogs) => {
-			updatedCategoriesWithEmbeddedBlogs.forEach((cat) => {
-				return cat.publishedBlogs.forEach((blog) => {
+			updatedCategoriesWithEmbeddedBlogs.forEach((category) => {
+				return category.publishedBlogs.forEach((blog) => {
 					if (typeof blog === 'string') {
 						fetchPublishedBlogById(blog).then((result) => {
 							blogsStore.addExtractedBlogs(result);
@@ -113,7 +114,6 @@ export default {
 			if (blogsStore.isReadyToFetch) {
 				promises.push(
 					blogsStore.addFetchedBlogs({
-						skip: 0,
 						limit: 5,
 						sort: 'latest',
 					}),
@@ -123,14 +123,13 @@ export default {
 			if (categoriesStore.isReadyToFetch) {
 				promises.push(
 					categoriesStore.addCategoriesWithLatestBlogs({
-						skip: 0,
 						limit: 4,
 						sort: 'larger',
 					}),
 				);
 			}
 
-			return promises;
+			return Promise.all(promises);
 		}
 
 		// Resolve promises for necessary data initialization
@@ -138,9 +137,9 @@ export default {
 			const promises = setupPromises();
 			if (promises.length === 0) return;
 
-			const resolvePromises = async () => await Promise.all(promises);
+			const resolvePromises = async () => await promises;
 			await execInit(resolvePromises, {
-				errorMsg: 'Something wrong happened during data fetch',
+				errorMsg: 'Something went wrong during data fetch',
 			});
 		});
 

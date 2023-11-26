@@ -6,11 +6,11 @@
 				<CategoryTile
 					v-for="category in categories"
 					:key="category.slug"
-					:totalBlogs="category.publishedBlogs.length"
+					:totalBlogs="category.totalPublishedBlogs"
 					:categoryName="category.name"
 					:categorySlug="category.slug"
 					:categoryDesc="category.description"
-					:categoryImageId="category.imageId"
+					:categoryImageId="category.imageFile"
 				/>
 				<CategoryTile
 					v-if="totalUncategorizedBlogs > 0"
@@ -28,7 +28,7 @@
 
 <script>
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import UncategorizedImage from '@/assets/images/cat_uncategorized.jpg';
 
 import { fetchTotalPublishedBlogsWithUnsetCategory } from '@/api/blogService';
@@ -47,18 +47,24 @@ export default {
 	setup() {
 		const categoriesStore = useCategoriesStore();
 
-		const { categoriesByNameAsc } = storeToRefs(categoriesStore);
+		const { sortedCategories } = storeToRefs(categoriesStore);
 		const totalUncategorizedBlogs = ref(0);
+		const categories = ref(sortedCategories.value('asc') || []);
 
 		async function fetchDataAndSet() {
 			await categoriesStore.addCategories({ limit: null });
 		}
 
+		watch(
+			() => categoriesStore.categories.length,
+			() => {
+				categories.value = sortedCategories.value('asc');
+			},
+		);
+
 		onMounted(async () => {
 			if (categoriesStore.isReadyToFetch) {
-				await execInit(fetchDataAndSet, {
-					errorMsg: 'Something went wrong when fetching categories',
-				});
+				await execInit(fetchDataAndSet);
 			}
 
 			if (totalUncategorizedBlogs.value === 0) {
@@ -68,7 +74,7 @@ export default {
 		});
 
 		return {
-			categories: computed(() => categoriesByNameAsc.value),
+			categories: computed(() => categories.value),
 			UncategorizedImage,
 			totalUncategorizedBlogs,
 		};
@@ -83,15 +89,10 @@ export default {
 	font-weight: bold;
 }
 .category-tiles {
-	display: grid;
-	grid-template-columns: 1fr;
+	display: flex;
+	flex-wrap: wrap;
 	gap: 1.5rem 15px;
 	margin: 3rem 0;
-}
-
-@media (min-width: 768px) {
-	.category-tiles {
-		grid-template-columns: repeat(2, 1fr);
-	}
+	align-items: stretch;
 }
 </style>

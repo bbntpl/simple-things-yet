@@ -77,9 +77,12 @@ export const fetchTotalPublishedBlogsWithUnsetCategory = async () => {
  * @returns {Promise<number>} Total number of published blogs
  * @throws {Error} Throws an error if the fetch operation fails
  */
-export const fetchTotalPublishedBlogs = async () => {
+export const fetchTotalPublishedBlogs = async (queries) => {
+	const queryString = convertToQueryUrl(queries);
 	try {
-		const response = await api.get(`${baseUrl}/published/total-blogs`);
+		const response = await api.get(
+			`${baseUrl}/published/total-blogs?${queryString}`,
+		);
 		return response.data.size;
 	} catch (error) {
 		throw new Error('Something went wrong when fetching total published blogs');
@@ -110,13 +113,4 @@ export const likeBlogPost = async (data, token) => {
 			return error.response.data;
 		}
 	}
-};
-
-/**
- * It returns the blog image url
- * @param {String} imageId The imageId of the blog image
- * @returns {String} The image url
- */
-export const getBlogImageUrl = (imageId) => {
-	return `${process.env.VUE_APP_API_URL}/api/blogs/${imageId}/image`;
 };
