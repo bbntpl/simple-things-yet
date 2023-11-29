@@ -52,7 +52,9 @@ export const fetchCategoriesWithLatestBlogs = async (queries) => {
  */
 export const fetchCategoryById = async (categoryId) => {
 	try {
-		const response = await api.get(`${baseUrl}/${categoryId}`);
+		const response = await api.get(
+			`${baseUrl}/${categoryId}/with-published-blogs?sort=asc`,
+		);
 		return response.data;
 	} catch (error) {
 		throw new Error('Something went wrong when fetching a category');

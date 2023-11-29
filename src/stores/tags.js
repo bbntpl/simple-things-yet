@@ -63,6 +63,11 @@ export const useTagsStore = defineStore('tags', () => {
 		return (slug) => tags.value.find((tag) => tag.slug === slug);
 	});
 
+	const areTagsInStore = computed(() => {
+		return (ids) =>
+			ids.every((tagId) => tags.value.some((tag) => tag.id === tagId));
+	});
+
 	const isReadyToFetch = computed(
 		() => status.value === 'idle' || status.value === 'succeeded',
 	);
@@ -74,6 +79,7 @@ export const useTagsStore = defineStore('tags', () => {
 		addTagBySlug,
 		getTagById,
 		getTagBySlug,
+		areTagsInStore,
 		isReadyToFetch,
 	};
 });

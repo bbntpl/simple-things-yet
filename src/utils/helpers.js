@@ -6,6 +6,7 @@ import { ElLoading, ElMessage } from 'element-plus';
  * @param {Function} apiRequest Async function(s) that'll be executed.
  * @param {Object} options Other args such as errors.
  */
+
 export const execInit = async (asyncFn, options = {}) => {
 	const { loadingText = 'Loading...', fullscreen = true } = options;
 
