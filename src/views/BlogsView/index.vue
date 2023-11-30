@@ -55,7 +55,7 @@ export default {
 			if (blogs.value.length === 0) {
 				promises.push(
 					blogsStore.addFetchedBlogs({
-						limit: 1,
+						limit: 2,
 						sort: 'latest',
 					}),
 				);
@@ -74,7 +74,7 @@ export default {
 
 		return {
 			tags: computed(() => tags.value),
-			blogs: computed(() => blogs.value),
+			blogs: computed(() => blogsStore.sortedBlogsByDate(blogs.value)),
 			totalPublishedBlogs: computed(() => totalPublishedBlogs.value),
 		};
 	},

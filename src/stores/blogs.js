@@ -80,6 +80,19 @@ export const useBlogsStore = defineStore('blogs', () => {
 		};
 	});
 
+	const sortedBlogsByDate = (blogs, sortBy = 'latest') => {
+		const referencedBlogs = [...unref(blogs)];
+		referencedBlogs.sort((a, b) => {
+			if (sortBy === 'oldest') {
+				return a.publishedAt.localeCompare(b.publishedAt);
+			} else if (sortBy === 'latest') {
+				return b.publishedAt.localeCompare(a.publishedAt);
+			}
+		});
+
+		return referencedBlogs;
+	};
+
 	const getLatestBlogs = computed(() => {
 		return (length) => paginatedBlogs.value(1, length);
 	});
@@ -93,12 +106,17 @@ export const useBlogsStore = defineStore('blogs', () => {
 	});
 
 	const getBlogsByTag = computed(() => {
-		return (tagId) => blogs.value.filter((blog) => blog.tags.includes(tagId));
+		return (tagId) =>
+			sortedBlogsByDate(blogs.value).filter((blog) =>
+				blog.tags.includes(tagId),
+			);
 	});
 
 	const getBlogsByCategory = computed(() => {
 		return (categoryId) =>
-			blogs.value.filter((blog) => blog.category === categoryId);
+			sortedBlogsByDate(blogs.value).filter(
+				(blog) => blog.category === categoryId,
+			);
 	});
 
 	const getBlogByCategory = computed(() => {
@@ -127,6 +145,7 @@ export const useBlogsStore = defineStore('blogs', () => {
 		totalPublishedBlogs,
 		initializeTotalPublishedBlogs,
 		paginatedBlogs,
+		sortedBlogsByDate,
 		addBlogBySlug,
 	};
 });

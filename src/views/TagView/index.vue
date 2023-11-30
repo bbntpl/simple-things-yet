@@ -52,7 +52,6 @@ export default {
 
 			if (blogs.length > 0) {
 				tag.blogs = unref(blogs);
-				console.log(tag);
 			}
 		});
 

@@ -1,0 +1,36 @@
+.blog-page .blog-image {
+  width: 100%;
+}
+
+.blog-page {
+  width: 100%;
+}
+
+.blog-page .category-image {
+  position: absolute;
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+  overflow: hidden;
+  object-fit: cover;
+  filter: blur(8px);
+}
+
+.blog-article p {
+  font-size: 18px;
+}
+
+.tag-links {
+  margin-top: 3rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.tag-links h6 {
+  margin-right: 0.8rem;
+}
+
+.tag-links span {
+  font-size: 16px;
+}
