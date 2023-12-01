@@ -13,7 +13,7 @@ export const useImageDocsStore = defineStore('imagedocs', () => {
 		try {
 			const fetchedImageDoc = await fetchImageDoc(imageId);
 			imageDocs.value.push({
-				credit: fetchedImageDoc,
+				credit: fetchedImageDoc.credit,
 				id: imageId,
 				fileName: fetchedImageDoc.fileName,
 				imageUrl: getImageUrl(imageId),

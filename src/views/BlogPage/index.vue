@@ -4,15 +4,63 @@
 			v-if="blogArticle.data && !blogArticle.doesNotExists"
 			class="blog-page"
 		>
-			<img
+			<div
 				className="category-image"
-				:src="blogArticle.categoryImageUrl"
-				alt="category"
-			/>
-			<img className="blog-image" :src="blogArticle.imageUrl" alt="blog" />
+				:style="{
+					backgroundImage: `linear-gradient(rgba(255,255,255,.69), rgba(255,255,255,.69)), url(${blogArticle.categoryImageDoc.imageUrl})`,
+				}"
+			>
+				<img
+					className="blog-image"
+					:src="blogArticle.imageDoc.imageUrl"
+					alt="blog"
+				/>
+			</div>
+			<p
+				v-if="
+					blogArticle.imageDoc.credit.authorName &&
+					blogArticle.imageDoc.credit.authorURL &&
+					blogArticle.categoryImageDoc.credit.authorName &&
+					blogArticle.categoryImageDoc.credit.authorURL
+				"
+			>
+				Photos by
+				<a :href="blogArticle.imageDoc.credit.authorURL">{{
+					blogArticle.imageDoc.credit.authorName
+				}}</a>
+				and
+				<a :href="blogArticle.categoryImageDoc.credit.authorURL">{{
+					blogArticle.categoryImageDoc.credit.authorName
+				}}</a>
+			</p>
+			<p
+				v-else-if="
+					blogArticle.imageDoc.credit.authorName &&
+					blogArticle.imageDoc.credit.authorURL
+				"
+			>
+				Photo by
+				<a :href="blogArticle.imageDoc.credit.authorURL">{{
+					blogArticle.imageDoc.credit.authorName
+				}}</a>
+			</p>
 			<div className="ql-snow blog-article primary-color">
-				<h1>{{ blogArticle.data.title }}</h1>
-				<div
+				<div className="blog-article-header">
+					<h1 className="blog-article-title">{{ blogArticle.data.title }}</h1>
+					<div className="blog-article-details">
+						<p className="blog-author">
+							Author:
+							<a className="blog-author-link" :href="`${urlRoot}/#/about`">
+								{{ blogArticle.author }}
+							</a>
+						</p>
+						<p className="blog-category-date">
+							{{ blogArticle.category }} / {{ blogPublishedDate }}
+						</p>
+					</div>
+				</div>
+				<el-divider />
+				<article
 					className="ql-editor"
 					v-dompurify-html="blogArticle.data.content"
 				/>
@@ -36,30 +84,34 @@
 	</MainWrapper>
 </template>
 
+<!-- eslint-disable max-lines -->
 <script>
 import { computed, onMounted, reactive, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
+import { ElTag, ElMessage, ElDivider } from 'element-plus';
 
 import './styles.css';
 import MainWrapper from '@/components/layouts/MainWrapper.vue';
-import { ElTag } from 'element-plus';
 
 import { useBlogsStore } from '@/stores/blogs';
 import { useCategoriesStore } from '@/stores/categories';
 import { useTagsStore } from '@/stores/tags';
+import { useAuthorStore } from '@/stores/author';
 import { useImageDocsStore } from '@/stores/image-docs';
 import { execInit } from '@/utils/helpers';
-import { ElMessage } from 'element-plus';
+import { formatDateInTimeZone } from '@/utils/date.js';
 
 export default {
 	name: 'BlogPage',
 	components: {
 		MainWrapper,
 		ElTag,
+		ElDivider,
 	},
 	// eslint-disable-next-line max-lines-per-function
 	setup() {
 		const blogsStore = useBlogsStore();
+		const authorStore = useAuthorStore();
 		const categoriesStore = useCategoriesStore();
 		const tagsStore = useTagsStore();
 		const imageDocsStore = useImageDocsStore();
@@ -67,11 +119,12 @@ export default {
 
 		const blogSlug = route.params.slug;
 		const blog = reactive({
+			author: null,
+			category: null,
+			categoryImageDoc: null,
 			data: null,
 			doesNotExists: false,
-			category: null,
-			categoryImageUrl: null,
-			imageUrl: null,
+			imageDoc: null,
 			tags: [],
 		});
 
@@ -90,11 +143,16 @@ export default {
 		});
 
 		watchEffect(() => {
+			if (blog.data === null || authorStore.author === null) return;
+			blog.author = authorStore.author.name;
+		});
+
+		watchEffect(() => {
 			if (blog.data === null) return;
 			const imageDoc = imageDocsStore.getImageDocById(blog.data.imageFile);
 
 			if (!imageDoc) return;
-			blog.imageUrl = imageDoc.imageUrl;
+			blog.imageDoc = imageDoc;
 		});
 
 		watchEffect(() => {
@@ -103,7 +161,7 @@ export default {
 				const imageDoc = imageDocsStore.getImageDocById(categoryDoc.imageFile);
 
 				if (!imageDoc) return;
-				blog.categoryImageUrl = imageDoc.imageUrl;
+				blog.categoryImageDoc = imageDoc;
 			}
 		});
 
@@ -162,6 +220,9 @@ export default {
 			const fetchedBlog = validateFetchedBlogAndGet();
 			if (!fetchedBlog || fetchedBlog === null) return promises;
 
+			if (authorStore.isReadyToFetch) {
+				promises.push(authorStore.initializeAuthor());
+			}
 			promises.push(fetchCategoryByIdAndSet(fetchedBlog.category));
 			promises.push(fetchTagsByIdAndSet(fetchedBlog.tags));
 			promises.push(fetchImageDocByIdAndSet(fetchedBlog.imageFile));
@@ -182,6 +243,9 @@ export default {
 
 		return {
 			blogArticle: blog,
+			blogPublishedDate: computed(() =>
+				formatDateInTimeZone(blog.data.publishedAt),
+			),
 			urlRoot: computed(() => process.env.VUE_APP_BASE_URL),
 		};
 	},
