@@ -1,6 +1,6 @@
 import api from '.';
 
-const baseUrl = '/author/';
+const baseUrl = '/author';
 
 /**
  * It fetches the author object

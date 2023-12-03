@@ -14,7 +14,7 @@
 		<BlogsCollection
 			v-if="category.data.publishedBlogs.length > 0"
 			:blogs="category.blogs"
-			:totalPublishedBlogs="category.data.publishedBlogs.length"
+			:totalPublishedBlogs="category.data.totalPublishedBlogs"
 			:queries="{ category: category.data.id }"
 		/>
 	</div>

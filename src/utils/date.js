@@ -15,7 +15,7 @@ export function formatDateInTimeZone(
 	// Convert UTC to the target time zone
 	const zonedDate = utcToZonedTime(parsedDate, timeZone);
 
-	const formattedDate = format(zonedDate, 'MMMM d, yyyy hh:mm', {
+	const formattedDate = format(zonedDate, 'MMMM d, yyyy hh:mm aa', {
 		timeZone,
 	});
 

@@ -27,7 +27,7 @@ app.use(pinia);
 app.use(router);
 app.use(ElementPlus);
 
-// error configurations
+// Error configurations
 app.config.errorHandler = (err) => {
 	console.log(err);
 };

@@ -61,6 +61,7 @@
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+  max-width: 100%;
 }
 
 .tag-links h6 {

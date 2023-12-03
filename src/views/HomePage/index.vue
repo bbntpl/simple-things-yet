@@ -30,29 +30,31 @@
 			href="./#/blogs"
 			>Browse all blogs</a
 		>
-		<BlogSection
-			v-for="(category, categoryIndex) in categoriesToShowcase"
-			:headerText="category.name"
-			:sectionStyles="{
-				...homepageSectionsStyles[categoryIndex].sectionStyles,
-			}"
-			:key="category.name"
-		>
-			<BlogCard
-				v-for="blog in category.publishedBlogs"
-				:v-if="typeof blog !== 'string'"
-				:key="`category_${blog.id}`"
-				variantType="TitleDescDate"
-				size="large"
-				:blog="blog"
-				:blogStyles="{ ...homepageSectionsStyles[categoryIndex].blogStyles }"
-			/>
-		</BlogSection>
+		<div v-if="!categories.doesNotExists && categories.data.length > 0">
+			<BlogSection
+				v-for="(category, categoryIndex) in categories.data"
+				:headerText="category.name"
+				:sectionStyles="{
+					...homepageSectionsStyles[categoryIndex].sectionStyles,
+				}"
+				:key="category.name"
+			>
+				<BlogCard
+					v-for="blog in category.publishedBlogs"
+					:v-if="typeof blog !== 'string'"
+					:key="`category_${blog.id}`"
+					variantType="TitleDesc"
+					size="large"
+					:blog="blog"
+					:blogStyles="{ ...homepageSectionsStyles[categoryIndex].blogStyles }"
+				/>
+			</BlogSection>
+		</div>
 	</MainWrapper>
 </template>
 
 <script>
-import { onMounted, ref, watch, computed } from 'vue';
+import { onMounted, ref, watch, computed, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import './styles.css';
@@ -64,7 +66,7 @@ import { useAuthorStore } from '@/stores/author';
 import { useCategoriesStore } from '@/stores/categories';
 import { execInit } from '@/utils/helpers';
 import homepageSectionsStyles from '@/data/homepage';
-import { fetchPublishedBlogById } from '@/api/blogService';
+// import { fetchPublishedBlogById } from '@/api/blogService';
 
 export default {
 	name: 'HomePage',
@@ -80,28 +82,36 @@ export default {
 		const categoriesStore = useCategoriesStore();
 
 		const { author } = storeToRefs(authorStore);
-		const { blogs, getLatestBlogs } = storeToRefs(blogsStore);
+		const { getLatestBlogs } = storeToRefs(blogsStore);
 		const { categoriesWithEmbeddedBlogs } = storeToRefs(categoriesStore);
 		const authorName = ref(author.value?.name || '');
+		const categories = reactive({
+			data: [],
+			doesNotExists: false,
+		});
 
 		watch(author, (updatedAuthor) => {
 			authorName.value = updatedAuthor.name;
 		});
 
-		watch(blogs, (updatedBlogs) => {
-			console.log(updatedBlogs);
-		});
-
 		watch(categoriesWithEmbeddedBlogs, (updatedCategoriesWithEmbeddedBlogs) => {
-			updatedCategoriesWithEmbeddedBlogs.forEach((category) => {
-				return category.publishedBlogs.forEach((blog) => {
-					if (typeof blog === 'string') {
-						fetchPublishedBlogById(blog).then((result) => {
-							blogsStore.addExtractedBlogs(result);
-						});
-					}
-				});
-			});
+			if (updatedCategoriesWithEmbeddedBlogs.length > 0) {
+				categories.data = updatedCategoriesWithEmbeddedBlogs;
+				categories.doesNotExists = false;
+				// updatedCategoriesWithEmbeddedBlogs.forEach((category) => {
+				// 	category.publishedBlogs.forEach((blog) => {
+				// 		if (typeof blog === 'string' || typeof blog === 'number') {
+				// 			if (!blogsStore.getBlogById(blog)) {
+				// 				fetchPublishedBlogById(blog).then((result) => {
+				// 					blogsStore.addExtractedBlogs(result);
+				// 				});
+				// 			}
+				// 		}
+				// 	});
+				// });
+			} else {
+				categories.doesNotExists = true;
+			}
 		});
 
 		function setupPromises() {
@@ -146,7 +156,7 @@ export default {
 		return {
 			latestBlogs: computed(() => getLatestBlogs.value(5)),
 			authorName,
-			categoriesToShowcase: computed(() => categoriesWithEmbeddedBlogs.value),
+			categories,
 			homepageSectionsStyles,
 		};
 	},

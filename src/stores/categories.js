@@ -64,29 +64,41 @@ export const useCategoriesStore = defineStore('categories', () => {
 		}
 	}
 
+	// eslint-disable-next-line max-lines-per-function
 	async function addCategoriesWithLatestBlogs(queries) {
 		changeStatusTo('loading');
 		try {
 			const fetchedCategories = await fetchCategoriesWithLatestBlogs({
 				...queries,
-				excludeIds: extractIds(unref([...categories.value, ...blogs.value])),
+				excludeIds: extractIds(unref(blogs.value)),
 			});
-
 			const extractedBlogs = [];
-			const mappedFetchedCategories = fetchedCategories.map((category) => {
+			const uniqueCategories = [];
+			fetchedCategories.forEach((category) => {
 				extractedBlogs.push(...category.publishedBlogs);
-				return {
-					...category,
-					publishedBlogs: category.publishedBlogs.map((blog) => blog.id),
-				};
+				const doesCategoryExists = getCategoryById.value(category.id);
+				if (!doesCategoryExists) {
+					const blogIds = category.publishedBlogs.map((blog) => blog.id);
+					const blogsByCategory = blogsStore.getBlogsByCategory(category.id);
+
+					// Ensure at least 2 published blogs for each category in a store
+					const additionalBlogIds = blogsByCategory
+						.slice(0, Math.max(0, 2 - category.publishedBlogs.length))
+						.map((blog) => blog.id);
+
+					const updatedPublishedBlogs = [...blogIds, ...additionalBlogIds];
+					uniqueCategories.push({
+						...category,
+						publishedBlogs: updatedPublishedBlogs,
+					});
+				}
 			});
 
-			categories.value.push(...mappedFetchedCategories);
+			categories.value.push(...uniqueCategories);
 			blogsStore.addExtractedBlogs(extractedBlogs);
 			changeStatusTo('succeeded');
 		} catch (err) {
 			changeStatusTo('failed');
-			console.error('Failed to fetch set of categories', err);
 			throw err;
 		}
 	}
@@ -115,33 +127,35 @@ export const useCategoriesStore = defineStore('categories', () => {
 	const getCategoryById = computed(() => {
 		return (id) => categories.value.find((category) => category.id === id);
 	});
+
 	const getCategoryBySlug = computed(() => {
 		return (slug) =>
 			categories.value.find((category) => category.slug === slug);
 	});
+
 	const categoriesWithEmbeddedBlogs = computed(() => {
 		const categoriesByTotalBlogs = sortedCategories.value('asc', true);
-		return categoriesByTotalBlogs
-			.filter((category) => category.publishedBlogs.length >= 2)
-			.map((category) => {
-				const blogIds = category.publishedBlogs;
-				const publishedBlogs = blogIds.map((blogId) => {
-					const blog = blogsStore.getBlogById(blogId);
-					if (!blog) {
-						return blogId;
-					}
-					return blog;
-				});
 
-				return {
+		return categoriesByTotalBlogs.reduce((result, category) => {
+			const blogIds = category.publishedBlogs;
+			const publishedBlogs = blogIds
+				.map((blogId) => blogsStore.getBlogById(blogId))
+				.filter((blog) => blog !== undefined);
+
+			// Only take two published blogs for each category to display in homepage
+			if (publishedBlogs.length >= 2) {
+				result.push({
 					name: category.name,
-					publishedBlogs: publishedBlogs,
-				};
-			});
+					publishedBlogs: publishedBlogs.slice(0, 2),
+				});
+			}
+
+			return result;
+		}, []);
 	});
 
 	const isReadyToFetch = computed(
-		() => status.value !== 'fully-fetched' && status.value !== 'loading',
+		() => status.value !== 'fully-fetched' || status.value !== 'loading',
 	);
 
 	return {
