@@ -98,17 +98,6 @@ export default {
 			if (updatedCategoriesWithEmbeddedBlogs.length > 0) {
 				categories.data = updatedCategoriesWithEmbeddedBlogs;
 				categories.doesNotExists = false;
-				// updatedCategoriesWithEmbeddedBlogs.forEach((category) => {
-				// 	category.publishedBlogs.forEach((blog) => {
-				// 		if (typeof blog === 'string' || typeof blog === 'number') {
-				// 			if (!blogsStore.getBlogById(blog)) {
-				// 				fetchPublishedBlogById(blog).then((result) => {
-				// 					blogsStore.addExtractedBlogs(result);
-				// 				});
-				// 			}
-				// 		}
-				// 	});
-				// });
 			} else {
 				categories.doesNotExists = true;
 			}
