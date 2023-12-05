@@ -33,10 +33,10 @@ const linksList = [
 	{
 		label: 'Resources',
 		items: [
-			{ name: 'Blog Categories', url: `${baseUrl}/blog-categories` },
-			{ name: 'Blogs', url: `${baseUrl}/blogs` },
-			{ name: 'FAQ', url: `${baseUrl}/faq` },
-			{ name: 'About', url: `${baseUrl}/about` },
+			{ name: 'Blog Categories', url: `${baseUrl}/#/blog-categories` },
+			{ name: 'Blogs', url: `${baseUrl}/#/blogs` },
+			{ name: 'FAQ', url: `${baseUrl}/#/faq` },
+			{ name: 'About', url: `${baseUrl}/#/about` },
 		],
 	},
 ];
